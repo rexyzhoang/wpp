@@ -66,4 +66,9 @@ function so_wp_ajax_function(){
   wp_die(); // ajax call must die to avoid trailing 0 in your response
 }
 
+**
+* Require plugin configuration
+*/
+require_once dirname(__FILE__) . '/includes/define.php';
+
 ?>
