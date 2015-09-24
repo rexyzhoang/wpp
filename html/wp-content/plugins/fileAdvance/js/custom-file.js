@@ -1,9 +1,8 @@
-// (function() {
+(function() {
 	var customFile = {
 		preventFile : _preventFile
 	};
 	function _preventFile(fileId){
-		alert(fileId);
 		jQuery.ajax({
 		    url: ajax_object.ajaxurl, // this is the object instantiated in wp_localize_script function
 		    type: 'POST',
@@ -13,9 +12,10 @@
 		    },
 		    success: function( data ){
 		      //Do something with the result from server
-		      console.log( data );
+		      var labelId = "#custom_url_" + fileId;
+		      jQuery(labelId).text(data.url);
 		    }
 		  });
 	}
-	// window.customFile = customFile;
-// })(window);
+	window.customFile = customFile;
+})(window);
