@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Hello-World
+Plugin Name: File Advance
 Plugin URI: https://github.com/gaupoit/wpp
 Description: A hello world plugin used to demonstrate the process of creating plugins.
 Version: 1.0
@@ -33,8 +33,19 @@ function media_custom_columns($column_name, $id) {
 }
 
 function admin_load_js(){
-    wp_enqueue_script( 'custom_js', plugins_url( '/js/custom-file.js', __FILE__ ), array('jquery') );
+    wp_register_script( 'ajaxHandle', plugins_url( '/js/custom-file.js', __FILE__ ), array('jquery') );
+    wp_enqueue_script( 'ajaxHandle' );
+    wp_localize_script( 'ajaxHandle', 'ajax_object', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
 }
 add_action('admin_enqueue_scripts', 'admin_load_js');
+
+add_action( 'wp_ajax_myaction', 'so_wp_ajax_function' );
+add_action( 'wp_ajax_nopriv_myaction', 'so_wp_ajax_function' );
+function so_wp_ajax_function(){
+  //DO whatever you want with data posted
+  //To send back a response you have to echo the result!
+  echo $_POST['id'];
+  wp_die(); // ajax call must die to avoid trailing 0 in your response
+}
 
 ?>
