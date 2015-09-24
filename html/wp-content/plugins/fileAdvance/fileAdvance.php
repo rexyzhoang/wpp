@@ -29,8 +29,8 @@ function media_custom_columns($column_name, $id) {
 	if($column_name != 'direct_access')
 		return;
 		?>
-		<input <?php if($checked) echo 'checked="checked"';?> onclick="customFile.preventFile('<?php echo $post->ID ?>')" type="checkbox"/><?php _e('Prevent direct access'); ?>
-		<div>Url: <label id="custom_url_<?php echo $post->ID ?>"><?php echo site_url() . '/' . $url ?></label></div>	
+		<input id="ckb_<?php echo $post->ID ?>" <?php if($checked) echo 'checked="checked"';?> onclick="customFile.preventFile('<?php echo $post->ID ?>')" type="checkbox"/><?php _e('Prevent direct access'); ?>
+		<div>Url: <?php echo site_url() . '/' ?><label id="custom_url_<?php echo $post->ID ?>"><?php echo $url ?></label></div>	
 		<?php
 }
 
@@ -46,19 +46,23 @@ function so_wp_ajax_function(){
   //DO whatever you want with data posted
   //To send back a response you have to echo the result!
   $post_id = $_POST['id'];
+  $is_prevented = $_POST['is_prevented'];
   $file_info = array(
   			'time' => current_time( 'mysql' ), 
   			'post_id'		=> $post_id,
+  			'is_prevented' => $is_prevented,
   			'url'       => generate_random_string()
   	);
   $result = create_advance_file($file_info);
-  if($result < 0 || $result === false) {
-  	$file_info = array(
+  if($result < 1 || $result === false) {
+  	$file_result = array(
   	  		'error' => true,
   	  		'message'=> "Cannot create file advance's info"
   		);
-  } 
-  wp_send_json($file_info);
+  } else {
+  	$file_result = get_advance_file_by_post_id($file_info['post_id']);
+  }
+  wp_send_json($file_result);
   wp_die(); // ajax call must die to avoid trailing 0 in your response
 }
 
@@ -98,7 +102,9 @@ function create_advance_file($file_info) {
 	global $wpdb;	
 	$post_id = $file_info['post_id'];
 	$post = get_post_by_id($post_id);
+
 	$result = false;
+
 	if(isset($post)) {
 		$file_advance = get_advance_file_by_post_id($post_id);
 		if(!isset($file_advance)) {
@@ -107,8 +113,15 @@ function create_advance_file($file_info) {
 				$table_name, 
 				$file_info 
 			);	
+			
+		} else {
+			$isUpdate = $file_advance->is_prevented !== $file_info->is_prevented;
+			if($isUpdate) {
+				$result = update_advance_file_by_post_id($file_info);
+			}
 		}
 	} 
+
 	return $result;
 }
 
@@ -123,6 +136,19 @@ function get_advance_file_by_post_id($post_id) {
 	$advance_file = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE post_id = $post_id", ARRAY_A) );
 	return $advance_file; 
 
+}
+
+function update_advance_file_by_post_id($fileInfo) {
+	global $wpdb;
+	$table_name = $wpdb->prefix . 'advancefiles';
+
+	$data = array(
+	    'is_prevented' => $fileInfo['is_prevented'],
+	);
+	$where = array( 'post_id' => $fileInfo['post_id'] );
+
+	$result = $wpdb->update( $table_name, $data, $where );
+	return $result;
 }
 
 register_activation_hook(__FILE__, 'jal_install');
