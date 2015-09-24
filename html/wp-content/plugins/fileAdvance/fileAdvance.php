@@ -33,12 +33,12 @@ function media_custom_columns($column_name, $id) {
 	$post = get_post($id);
 	$advance_file = get_advance_file_by_post_id($post->ID);
 	$checked = isset($advance_file) && $advance_file->is_prevented;
-	$url = isset($advance_file) ? $advance_file->url : '';
+	$url = isset($advance_file) && $checked ? site_url() . '/' . $advance_file->url : '';
 	if($column_name != 'direct_access')
 		return;
 		?>
 		<input id="ckb_<?php echo $post->ID ?>" <?php if($checked) echo 'checked="checked"';?> onclick="customFile.preventFile('<?php echo $post->ID ?>')" type="checkbox"/><?php _e('Prevent direct access'); ?>
-		<div>Url: <?php echo site_url() . '/' ?><label id="custom_url_<?php echo $post->ID ?>"><?php echo $url ?></label></div>	
+		<div><label id="custom_url_<?php echo $post->ID ?>"><?php echo $url ?></label></div>	
 		<?php
 }
 function so_wp_ajax_function(){
@@ -60,6 +60,7 @@ function so_wp_ajax_function(){
   		);
   } else {
   	$file_result = get_advance_file_by_post_id($file_info['post_id']);
+  	$file_result->url = site_url() . '/' . $file_result->url;
   }
   wp_send_json($file_result);
   wp_die(); // ajax call must die to avoid trailing 0 in your response
