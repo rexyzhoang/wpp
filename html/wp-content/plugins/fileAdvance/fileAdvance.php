@@ -1,4 +1,10 @@
 <?php
+
+include 'includes/fileAdvanceDB.php';
+include 'includes/javascriptLoader.php';
+include 'includes/helper.php';
+include 'includes/advanceFileRepository.php';
+
 /*
 Plugin Name: File Advance
 Plugin URI: https://github.com/gaupoit/wpp
@@ -11,10 +17,12 @@ License: GPL
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 add_filter("manage_upload_columns", 'upload_columns');
 add_action("manage_media_custom_column", 'media_custom_columns', 0, 2);
+add_action('admin_enqueue_scripts', 'admin_load_js');
+add_action( 'wp_ajax_myaction', 'so_wp_ajax_function' );
+register_activation_hook(__FILE__, 'jal_install');
 
 function upload_columns($columns) {
 
-	// unset($columns['parent']);
 	$columns['direct_access'] = "Prevent Direct Access";
 
 	return $columns;
@@ -33,15 +41,6 @@ function media_custom_columns($column_name, $id) {
 		<div>Url: <?php echo site_url() . '/' ?><label id="custom_url_<?php echo $post->ID ?>"><?php echo $url ?></label></div>	
 		<?php
 }
-
-function admin_load_js(){
-    wp_register_script( 'ajaxHandle', plugins_url( '/js/custom-file.js', __FILE__ ), array('jquery') );
-    wp_enqueue_script( 'ajaxHandle' );
-    wp_localize_script( 'ajaxHandle', 'ajax_object', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
-}
-add_action('admin_enqueue_scripts', 'admin_load_js');
-
-add_action( 'wp_ajax_myaction', 'so_wp_ajax_function' );
 function so_wp_ajax_function(){
   //DO whatever you want with data posted
   //To send back a response you have to echo the result!
@@ -51,7 +50,7 @@ function so_wp_ajax_function(){
   			'time' => current_time( 'mysql' ), 
   			'post_id'		=> $post_id,
   			'is_prevented' => $is_prevented,
-  			'url'       => generate_random_string()
+  			'url'       => generate_unique_string()
   	);
   $result = create_advance_file($file_info);
   if($result < 1 || $result === false) {
@@ -65,92 +64,5 @@ function so_wp_ajax_function(){
   wp_send_json($file_result);
   wp_die(); // ajax call must die to avoid trailing 0 in your response
 }
-
-function generate_random_string($length = 10) {
-    return substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
-}
-
-global $jal_db_version;
-$jal_db_version = '1.0';
-
-function jal_install() {
-	global $wpdb;
-	global $jal_db_version;
-
-	$wpdb->show_errors();
-
-	$table_name = $wpdb->prefix . 'advancefiles';
-	
-	$charset_collate = $wpdb->get_charset_collate();
-
-	$sql = "CREATE TABLE $table_name (
-		ID mediumint(9) NOT NULL AUTO_INCREMENT,
-		post_id mediumint(9) NOT NULL,
-		time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-		url varchar(55) DEFAULT '' NOT NULL,
-		is_prevented tinyint(1) DEFAULT 1,
-		UNIQUE KEY id (id)
-	) $charset_collate;";
-
-	require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-	dbDelta($sql);
-
-	add_option('jal_db_version', $jal_db_version);
-}
-
-function create_advance_file($file_info) {
-	global $wpdb;	
-	$post_id = $file_info['post_id'];
-	$post = get_post_by_id($post_id);
-
-	$result = false;
-
-	if(isset($post)) {
-		$file_advance = get_advance_file_by_post_id($post_id);
-		if(!isset($file_advance)) {
-			$table_name = $wpdb->prefix . 'advancefiles';
-			$result = $wpdb->insert( 
-				$table_name, 
-				$file_info 
-			);	
-			
-		} else {
-			$isUpdate = $file_advance->is_prevented !== $file_info->is_prevented;
-			if($isUpdate) {
-				$result = update_advance_file_by_post_id($file_info);
-			}
-		}
-	} 
-
-	return $result;
-}
-
-function get_post_by_id($post_id) {
-	$post = get_post($post_id);
-	return $post;
-}
-
-function get_advance_file_by_post_id($post_id) {
-	global $wpdb;
-	$table_name = $wpdb->prefix . 'advancefiles';
-	$advance_file = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE post_id = $post_id", ARRAY_A) );
-	return $advance_file; 
-
-}
-
-function update_advance_file_by_post_id($fileInfo) {
-	global $wpdb;
-	$table_name = $wpdb->prefix . 'advancefiles';
-
-	$data = array(
-	    'is_prevented' => $fileInfo['is_prevented'],
-	);
-	$where = array( 'post_id' => $fileInfo['post_id'] );
-
-	$result = $wpdb->update( $table_name, $data, $where );
-	return $result;
-}
-
-register_activation_hook(__FILE__, 'jal_install');
 
 ?>
