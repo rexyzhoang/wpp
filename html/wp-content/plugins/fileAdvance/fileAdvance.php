@@ -21,6 +21,13 @@ add_action('admin_enqueue_scripts', 'admin_load_js');
 add_action( 'wp_ajax_myaction', 'so_wp_ajax_function' );
 register_activation_hook(__FILE__, 'jal_install');
 
+/**
+* Require plugin configuration
+*/
+//require_once dirname(__FILE__) . '/includes/define.php';
+
+require_once dirname(__FILE__) . '/includes/function.php';
+
 function upload_columns($columns) {
 
 	$columns['direct_access'] = "Prevent Direct Access";
@@ -30,7 +37,7 @@ function upload_columns($columns) {
 }
 function media_custom_columns($column_name, $id) {
 
-	$post = get_post($id);
+	$post = get_post($id);	
 	$advance_file = get_advance_file_by_post_id($post->ID);
 	$checked = isset($advance_file) && $advance_file->is_prevented;
 	$url = isset($advance_file) && $checked ? site_url() . '/' . $advance_file->url : '';
@@ -61,14 +68,21 @@ function so_wp_ajax_function(){
   } else {
   	$file_result = get_advance_file_by_post_id($file_info['post_id']);
   	$file_result->url = site_url() . '/' . $file_result->url;
+		
+		// TODO: better extract to method
+		$post = get_post($_POST['id']);
+		$file_url = $post->guid;
+		$redirect_url_rule = fa_generate_prevent_rule(site_url(), $file_url);
+		
+		// write new rule $redirect_url_rule to .htaccess file
+  	if ($file_result->is_prevented == "1") {  					
+			WPHE_WriteNewHtaccess($redirect_url_rule);			
+  	} else {
+			// TODO: find in .htaccess file to remove $redirect_url_rule
+		}
   }
   wp_send_json($file_result);
   wp_die(); // ajax call must die to avoid trailing 0 in your response
 }
-
-**
-* Require plugin configuration
-*/
-require_once dirname(__FILE__) . '/includes/define.php';
 
 ?>
