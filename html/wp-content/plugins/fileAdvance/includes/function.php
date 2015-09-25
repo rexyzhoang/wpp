@@ -194,8 +194,11 @@ function WPHE_DeleteBackup(){
 
 /***** Vytvoření nového htaccess souboru ******************************/
 function WPHE_WriteNewHtaccess($WPHE_new_content){
-	$WPHE_orig_path = ABSPATH.'.htaccess';
-	//$WPHE_orig_path = 'D:/xampp/htdocs/wordpress/test.txt';
+	global $wp_rewrite;
+
+	$home_path = get_home_path();
+	$htaccess_file = $home_path.'.htaccess';
+	$WPHE_orig_path = $htaccess_file; //ABSPATH.'.htaccess';
 	
 	if(file_exists($WPHE_orig_path))
 	{
