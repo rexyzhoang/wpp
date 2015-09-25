@@ -27,7 +27,10 @@
 		      		jQuery(labelId).hide();
 		      	}
 		      }
-		      
+		    },
+		    error: function (error) {
+		    	console.log("Errors", error);
+		    	alert(error.responseText);
 		    }
 		  });
 	}
