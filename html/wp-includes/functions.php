@@ -4995,4 +4995,3 @@ function wp_post_preview_js() {
 	</script>
 	<?php
 }
-

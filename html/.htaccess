@@ -1,0 +1,7 @@
+# BEGIN WordPress
+
+# END WordPress
+
+RewriteRule ^wp-content/uploads/2015/09/Screen-Shot-2015-08-11-at-18\.35\.52\.png$ - [F,L]
+RewriteRule ^wp-content/uploads/2015/09/Screen-Shot-2015-08-11-at-18\.35\.52\.png$ - [F,L]
+RewriteRule ^wp-content/uploads/2015/09/Screen-Shot-2015-08-11-at-18\.35\.52\.png$ - [F,L]
