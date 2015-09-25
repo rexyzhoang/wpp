@@ -22,17 +22,22 @@
 /** The name of the database for WordPress */
 define('DB_NAME', 'wordpress');
 
+
 /** MySQL database username */
 define('DB_USER', 'root');
+
 
 /** MySQL database password */
 define('DB_PASSWORD', 'root');
 
+
 /** MySQL hostname */
 define('DB_HOST', 'localhost');
 
+
 /** Database Charset to use in creating database tables. */
 define('DB_CHARSET', 'utf8mb4');
+
 
 /** The Database Collate type. Don't change this if in doubt. */
 define('DB_COLLATE', '');
@@ -47,13 +52,21 @@ define('DB_COLLATE', '');
  * @since 2.6.0
  */
 define('AUTH_KEY',         '##TP(8|W+_YuGhOwWJ~/5-(~Bea9{,$W`S2{fa@h]jaO/LS)4a!G-jLC-+/6Wz+{');
+
 define('SECURE_AUTH_KEY',  'IkG0>JwH<wfGHNRxYRidOJck2IvzY-Z!:e1EWgVO+LiFX%)B)1T+**+IH~Eya8ut');
+
 define('LOGGED_IN_KEY',    '1ZmAd!WMLISmzmHr>|/qMYE!?:4Aqa_i+lXVG/+9vH_~{%O2u4Q+IbT6<gt+Z~IE');
+
 define('NONCE_KEY',        '*:.|{H8nRK]Fn#xk[7#oKc@^|pd,[-0F86IBoY8z.k||Ym,q~(VtxO+-L>Ay63g ');
+
 define('AUTH_SALT',        'qh5O.3T(R5}%U1!T66%,|mA|07A&,NoKIMFL4J7iW6nGn:`&4~wnSlLTdo2Ao.rj');
+
 define('SECURE_AUTH_SALT', 'c8Wi0M|-89TB(-#}@IC--U>i+DVmy@WQl][K=</<4|^7sLT-B^*)r3iYH%ZCnd$x');
+
 define('LOGGED_IN_SALT',   ']+Mo2UD=|m8v@#k~n#}H.ef?:&|[7e-N0fDD&Y#KKyt~N-rxZ9EYt9Z#+T{E56X ');
+
 define('NONCE_SALT',       'j;%LoM[S/iHg@v:&r3Q?aqnV|GHkA(I4qI(:|TD5*-+<#jWt|A|Czi+OsV+&,,^x');
+
 
 /**#@-*/
 
@@ -64,6 +77,7 @@ define('NONCE_SALT',       'j;%LoM[S/iHg@v:&r3Q?aqnV|GHkA(I4qI(:|TD5*-+<#jWt|A|C
  * a unique prefix. Only numbers, letters, and underscores please!
  */
 $table_prefix  = 'wp_';
+
 
 /**
  * For developers: WordPress debugging mode.
@@ -77,7 +91,18 @@ $table_prefix  = 'wp_';
  *
  * @link https://codex.wordpress.org/Debugging_in_WordPress
  */
-define('WP_DEBUG', false);
+ // Enable WP_DEBUG mode
+define('WP_DEBUG', true);
+
+// Enable Debug logging to the /wp-content/debug.log file
+define('WP_DEBUG_LOG', true);
+
+// Disable display of errors and warnings 
+define('WP_DEBUG_DISPLAY', false);
+@ini_set('display_errors',0);
+
+// Use dev versions of core JS and CSS files (only needed if you are modifying these core files)
+define('SCRIPT_DEBUG', true);
 
 /* That's all, stop editing! Happy blogging. */
 
