@@ -232,7 +232,7 @@ function WPHE_WriteNewHtaccess($WPHE_new_content){
 	$WPHE_new_content = trim($WPHE_new_content);
 	$WPHE_new_content = str_replace('\\\\', '\\', $WPHE_new_content);
 	$WPHE_new_content = str_replace('\"', '"', $WPHE_new_content);
-	$WPHE_write_success = file_put_contents($WPHE_orig_path, $WPHE_new_content, FILE_APPEND);
+	$WPHE_write_success = file_put_contents($WPHE_orig_path, PHP_EOL . $WPHE_new_content, FILE_APPEND);
 	@clearstatcache();
 	if(!file_exists($WPHE_orig_path) && $WPHE_write_success === false)
 	{
@@ -257,7 +257,7 @@ function fa_generate_prevent_rule($site_url, $file_url) {
 	$redirect_url_rule = str_replace($site_url, '^', $file_url);
 	$redirect_url_rule = str_replace('.', '\.', $redirect_url_rule);
 	$redirect_url_rule .= '$ - [F,L]';			
-	$redirect_url_rule = 'RewriteRule ' . $redirect_url_rule . '\n';
+	$redirect_url_rule = 'RewriteRule ' . $redirect_url_rule;
 	return $redirect_url_rule;
 }
 
