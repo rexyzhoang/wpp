@@ -105,5 +105,4 @@ function so_wp_ajax_function(){
   wp_send_json($file_result);
   wp_die(); // ajax call must die to avoid trailing 0 in your response
 }
-
 ?>
