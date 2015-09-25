@@ -204,16 +204,24 @@ function WPHE_WriteNewHtaccess($WPHE_new_content){
 	{
 		if(is_writable($WPHE_orig_path))
 		{
+<<<<<<< HEAD
 			// // var_dump('is_writable');
 			//@unlink($WPHE_orig_path);
 		}else{
 			// // var_dump('unwritable');
+=======
+			error_log('is_writable');
+			//@unlink($WPHE_orig_path);
+		}else{
+			error_log('unwritable');
+>>>>>>> a6eff12d6dfa0bc595b4176dfa47765105726949
 			@chmod($WPHE_orig_path, 0666);
 			@unlink($WPHE_orig_path);
 		}
 	}
 	
 	if ( !$f = fopen( $WPHE_orig_path, 'r' ) ) {
+<<<<<<< HEAD
 		// var_dump('cant open');
 		return false;
 	}			
@@ -223,6 +231,17 @@ function WPHE_WriteNewHtaccess($WPHE_new_content){
 	
 	//@clearstatcache();
 	// var_dump($data);
+=======
+		error_log('cant open');
+		return false;
+	}			
+	
+	error_log('WPHE_orig_path', $WPHE_orig_path, ABSPATH, $_SERVER["DOCUMENT_ROOT"]);
+	$data = file_get_contents($WPHE_orig_path);
+	
+	//@clearstatcache();
+	error_log($data);
+>>>>>>> a6eff12d6dfa0bc595b4176dfa47765105726949
 	
 	$WPHE_new_content = trim($WPHE_new_content);
 	$WPHE_new_content = str_replace('\\\\', '\\', $WPHE_new_content);
@@ -231,14 +250,22 @@ function WPHE_WriteNewHtaccess($WPHE_new_content){
 	@clearstatcache();
 	if(!file_exists($WPHE_orig_path) && $WPHE_write_success === false)
 	{
+<<<<<<< HEAD
 		// // var_dump('file not exists');
+=======
+		error_log('file not exists');
+>>>>>>> a6eff12d6dfa0bc595b4176dfa47765105726949
 		unset($WPHE_orig_path);
 		unset($WPHE_new_content);
 		unset($data);
 		unset($WPHE_write_success);
 		return false;
 	}else{
+<<<<<<< HEAD
 		// // var_dump('file existed');
+=======
+		error_log('file existed');
+>>>>>>> a6eff12d6dfa0bc595b4176dfa47765105726949
 		unset($WPHE_orig_path);
 		unset($WPHE_new_content);
 		unset($data);
@@ -258,16 +285,24 @@ function WPHE_RemoveHtaccess($WPHE_rule){
 	{
 		if(is_writable($WPHE_orig_path))
 		{
+<<<<<<< HEAD
 			// var_dump('is_writable');
 			//@unlink($WPHE_orig_path);
 		}else{
 			// var_dump('unwritable');
+=======
+			error_log('is_writable');
+			//@unlink($WPHE_orig_path);
+		}else{
+			error_log('unwritable');
+>>>>>>> a6eff12d6dfa0bc595b4176dfa47765105726949
 			@chmod($WPHE_orig_path, 0666);
 			@unlink($WPHE_orig_path);
 		}
 	}
 	
 	if ( !$f = fopen( $WPHE_orig_path, 'r' ) ) {
+<<<<<<< HEAD
 		// var_dump('cant open');
 		return false;
 	}			
@@ -277,6 +312,17 @@ function WPHE_RemoveHtaccess($WPHE_rule){
 	
 	//@clearstatcache();
 	// var_dump($data);
+=======
+		error_log('cant open');
+		return false;
+	}			
+	
+	error_log('WPHE_orig_path', $WPHE_orig_path, ABSPATH, $_SERVER["DOCUMENT_ROOT"]);
+	$data = file_get_contents($WPHE_orig_path);
+	
+	//@clearstatcache();
+	error_log($data);
+>>>>>>> a6eff12d6dfa0bc595b4176dfa47765105726949
 	
 	$WPHE_rule = trim($WPHE_rule);
 	$WPHE_rule = str_replace('\\\\', '\\', $WPHE_rule);
@@ -287,12 +333,20 @@ function WPHE_RemoveHtaccess($WPHE_rule){
 		$start_replace = strpos($data, $WPHE_rule);
 		$replace_length = strlen($WPHE_rule);
 	
+<<<<<<< HEAD
 		// var_dump('found new rule, removing..');
+=======
+		error_log('found new rule, removing..');
+>>>>>>> a6eff12d6dfa0bc595b4176dfa47765105726949
 		$data = str_replace($WPHE_rule, '', $data);
 		
 		while (substr($data, start_replace - 1, 1) == PHP_EOL) {
 			$data = substr_replace ($data, '', start_replace - 1, 1);
+<<<<<<< HEAD
 			// var_dump('after remove rule: ', $data);
+=======
+			error_log('after remove rule: ', $data);
+>>>>>>> a6eff12d6dfa0bc595b4176dfa47765105726949
 		}
 
 	}
@@ -301,14 +355,22 @@ function WPHE_RemoveHtaccess($WPHE_rule){
 	@clearstatcache();
 	if(!file_exists($WPHE_orig_path) && $WPHE_write_success === false)
 	{
+<<<<<<< HEAD
 		// // var_dump('file not exists');
+=======
+		error_log('file not exists');
+>>>>>>> a6eff12d6dfa0bc595b4176dfa47765105726949
 		unset($WPHE_orig_path);
 		unset($WPHE_new_content);
 		unset($data);
 		unset($WPHE_write_success);
 		return false;
 	}else{
+<<<<<<< HEAD
 		// // var_dump('file existed');
+=======
+		error_log('file existed');
+>>>>>>> a6eff12d6dfa0bc595b4176dfa47765105726949
 		unset($WPHE_orig_path);
 		unset($WPHE_new_content);
 		unset($data);
@@ -329,6 +391,10 @@ function fa_generate_prevent_rule($site_url, $file_url) {
 /****** debug funkce **************************************************/
 function WPHE_Debug($data){
 	echo '<pre>';
+<<<<<<< HEAD
 	// var_dump($data);
+=======
+	error_log($data);
+>>>>>>> a6eff12d6dfa0bc595b4176dfa47765105726949
 	echo '</pre>';
 }
