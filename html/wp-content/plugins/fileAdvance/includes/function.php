@@ -199,13 +199,14 @@ function WPHE_WriteNewHtaccess($WPHE_new_content){
 	$home_path = get_home_path();
 	$htaccess_file = $home_path.'.htaccess';
 	$WPHE_orig_path = $htaccess_file; //ABSPATH.'.htaccess';
+	//$WPHE_orig_path = 'D:/xampp/htdocs/wordpress/test.txt';
 	
 	if(file_exists($WPHE_orig_path))
 	{
 		if(is_writable($WPHE_orig_path))
 		{
 			var_dump('is_writable');
-			@unlink($WPHE_orig_path);
+			//@unlink($WPHE_orig_path);
 		}else{
 			var_dump('unwritable');
 			@chmod($WPHE_orig_path, 0666);
@@ -213,9 +214,19 @@ function WPHE_WriteNewHtaccess($WPHE_new_content){
 		}
 	}
 	
+	if ( !$f = fopen( $WPHE_orig_path, 'r' ) ) {
+		var_dump('cant open');
+		return false;
+	}			
+	
 	var_dump('WPHE_orig_path', $WPHE_orig_path, ABSPATH, $_SERVER["DOCUMENT_ROOT"]);
-	$data = file_get_contents($WPHE_orig_path);
-	@clearstatcache();
+	//$data = file_get_contents($WPHE_orig_path);
+	//$data = file($WPHE_orig_path);
+	
+	$data = fread($f,filesize($WPHE_orig_path));
+	fclose($myfile);
+	
+	//@clearstatcache();
 	var_dump($data);
 	
 	$WPHE_new_content = trim($WPHE_new_content);
@@ -246,7 +257,7 @@ function fa_generate_prevent_rule($site_url, $file_url) {
 	$redirect_url_rule = str_replace($site_url, '^', $file_url);
 	$redirect_url_rule = str_replace('.', '\.', $redirect_url_rule);
 	$redirect_url_rule .= '$ - [F,L]';			
-	$redirect_url_rule = 'RewriteRule ' . $redirect_url_rule;
+	$redirect_url_rule = 'RewriteRule ' . $redirect_url_rule . '\n';
 	return $redirect_url_rule;
 }
 
