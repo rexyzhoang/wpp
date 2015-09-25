@@ -2,7 +2,7 @@
 if (!defined('ABSPATH')) die('You do not have sufficient permissions to access this file.');
 
 
-
+// TEMPORARY DONT USE
 /***** Vytvoření zálohy htaccess souboru ******************************/
 function WPHE_CreateBackup(){
 	$WPHE_backup_path = ABSPATH.'wp-content/htaccess.backup';
@@ -72,7 +72,7 @@ function WPHE_CreateBackup(){
 }
 
 
-
+// TEMPORARY DONT USE
 /***** Vytvoření htaccess souboru ve složce wp-content ****************/
 function WPHE_CreateSecureWPcontent(){
 	$wphe_secure_path = ABSPATH.'wp-content/.htaccess';
@@ -123,7 +123,7 @@ deny from all
 }
 
 
-
+// TEMPORARY DONT USE
 /***** Obnova zálohy htaccess souboru *********************************/
 function WPHE_RestoreBackup(){
 	$wphe_backup_path = ABSPATH.'wp-content/htaccess.backup';
@@ -161,7 +161,7 @@ function WPHE_RestoreBackup(){
 }
 
 
-
+// TEMPORARY DONT USE
 /***** Smazání záložního souboru **************************************/
 function WPHE_DeleteBackup(){
 	$wphe_backup_path = ABSPATH.'wp-content/htaccess.backup';
@@ -198,8 +198,7 @@ function WPHE_WriteNewHtaccess($WPHE_new_content){
 
 	$home_path = get_home_path();
 	$htaccess_file = $home_path.'.htaccess';
-	$WPHE_orig_path = $htaccess_file; //ABSPATH.'.htaccess';
-	//$WPHE_orig_path = 'D:/xampp/htdocs/wordpress/test.txt';
+	$WPHE_orig_path = $htaccess_file; 
 	
 	if(file_exists($WPHE_orig_path))
 	{
@@ -220,11 +219,7 @@ function WPHE_WriteNewHtaccess($WPHE_new_content){
 	}			
 	
 	var_dump('WPHE_orig_path', $WPHE_orig_path, ABSPATH, $_SERVER["DOCUMENT_ROOT"]);
-	//$data = file_get_contents($WPHE_orig_path);
-	//$data = file($WPHE_orig_path);
-	
-	$data = fread($f,filesize($WPHE_orig_path));
-	fclose($myfile);
+	$data = file_get_contents($WPHE_orig_path);
 	
 	//@clearstatcache();
 	var_dump($data);
@@ -233,6 +228,76 @@ function WPHE_WriteNewHtaccess($WPHE_new_content){
 	$WPHE_new_content = str_replace('\\\\', '\\', $WPHE_new_content);
 	$WPHE_new_content = str_replace('\"', '"', $WPHE_new_content);
 	$WPHE_write_success = file_put_contents($WPHE_orig_path, PHP_EOL . $WPHE_new_content, FILE_APPEND);
+	@clearstatcache();
+	if(!file_exists($WPHE_orig_path) && $WPHE_write_success === false)
+	{
+		var_dump('file not exists');
+		unset($WPHE_orig_path);
+		unset($WPHE_new_content);
+		unset($data);
+		unset($WPHE_write_success);
+		return false;
+	}else{
+		var_dump('file existed');
+		unset($WPHE_orig_path);
+		unset($WPHE_new_content);
+		unset($data);
+		unset($WPHE_write_success);
+		return true;
+	}
+}
+
+function WPHE_RemoveHtaccess($WPHE_rule){
+	global $wp_rewrite;
+
+	$home_path = get_home_path();
+	$htaccess_file = $home_path.'.htaccess';
+	$WPHE_orig_path = $htaccess_file; 
+	
+	if(file_exists($WPHE_orig_path))
+	{
+		if(is_writable($WPHE_orig_path))
+		{
+			var_dump('is_writable');
+			//@unlink($WPHE_orig_path);
+		}else{
+			var_dump('unwritable');
+			@chmod($WPHE_orig_path, 0666);
+			@unlink($WPHE_orig_path);
+		}
+	}
+	
+	if ( !$f = fopen( $WPHE_orig_path, 'r' ) ) {
+		var_dump('cant open');
+		return false;
+	}			
+	
+	var_dump('WPHE_orig_path', $WPHE_orig_path, ABSPATH, $_SERVER["DOCUMENT_ROOT"]);
+	$data = file_get_contents($WPHE_orig_path);
+	
+	//@clearstatcache();
+	var_dump($data);
+	
+	$WPHE_rule = trim($WPHE_rule);
+	$WPHE_rule = str_replace('\\\\', '\\', $WPHE_rule);
+	$WPHE_rule = str_replace('\"', '"', $WPHE_rule);
+	
+	// remove matching rules and EOL
+	while (strpos($data, $WPHE_rule) !== false) {
+		$start_replace = strpos($data, $WPHE_rule);
+		$replace_length = strlen($WPHE_rule);
+	
+		var_dump('found new rule, removing..');
+		$data = str_replace($WPHE_rule, '', $data);
+		
+		while (substr($data, start_replace - 1, 1) == PHP_EOL) {
+			$data = substr_replace ($data, '', start_replace - 1, 1);
+			var_dump('after remove rule: ', $data);
+		}
+
+	}
+	
+	$WPHE_write_success = file_put_contents($WPHE_orig_path, $data);
 	@clearstatcache();
 	if(!file_exists($WPHE_orig_path) && $WPHE_write_success === false)
 	{

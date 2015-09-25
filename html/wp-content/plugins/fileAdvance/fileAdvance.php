@@ -28,6 +28,27 @@ register_activation_hook(__FILE__, 'jal_install');
 
 require_once dirname(__FILE__) . '/includes/function.php';
 
+// TEMPORARY THIS HOOK NOT WORK
+add_filter('mod_rewrite_rules', 'fa_htaccess_contents');
+function fa_htaccess_contents( $rules ) {
+    $my_content = <<<EOD
+    # BEGIN WordPress
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+</IfModule>
+# END WordPress\n
+EOD;
+	$rules = $my_content . $rules;
+	global $wp_rewrite;
+	$wp_rewrite->flush_rules();
+    return $rules;
+}
+
 function upload_columns($columns) {
 
 	$columns['direct_access'] = "Prevent Direct Access";
@@ -76,10 +97,10 @@ function so_wp_ajax_function(){
 		
 		// write new rule $redirect_url_rule to .htaccess file
   	if ($file_result->is_prevented == "1") {  					
-			WPHE_WriteNewHtaccess($redirect_url_rule);			
+		WPHE_WriteNewHtaccess($redirect_url_rule);			
   	} else {
-			// TODO: find in .htaccess file to remove $redirect_url_rule
-		}
+  		WPHE_RemoveHtaccess($redirect_url_rule);
+	}
   }
   wp_send_json($file_result);
   wp_die(); // ajax call must die to avoid trailing 0 in your response
