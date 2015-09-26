@@ -190,105 +190,113 @@ function WPHE_DeleteBackup(){
 	}
 }
 
-
-
-/***** Vytvoření nového htaccess souboru ******************************/
-function WPHE_WriteNewHtaccess($WPHE_new_content){
-	global $wp_rewrite;
-
+function fa_get_htaccess_file_path() {
+	//global $wp_rewrite;
 	$home_path = get_home_path();
 	$htaccess_file = $home_path.'.htaccess';
-	$WPHE_orig_path = $htaccess_file; 
 	
-	if(file_exists($WPHE_orig_path))
-	{
-		if(is_writable($WPHE_orig_path))
-		{
-			//error_log('is_writable');
-			//@unlink($WPHE_orig_path);
-		}else{
-			//error_log('unwritable');
-			@chmod($WPHE_orig_path, 0666);
-			@unlink($WPHE_orig_path);
-		}
+	return $htaccess_file;
+}
+
+function fa_get_htaccess_content() {
+	//global $wp_rewrite;
+
+	$htaccess_file = fa_get_htaccess_file_path();
+	
+	if (!file_exists($htaccess_file)) {
+		return false;
 	}
 	
-	if ( !$f = fopen( $WPHE_orig_path, 'r' ) ) {
-		//error_log('cant open');
+	if(!is_writable($htaccess_file)) {
+		chmod($htaccess_file, 0666);
+	}
+	
+	if ( !$f = fopen( $htaccess_file, 'r' ) ) {
 		return false;
 	}			
 	
-	//error_log('WPHE_orig_path', $WPHE_orig_path, ABSPATH, $_SERVER["DOCUMENT_ROOT"]);
-	$data = file_get_contents($WPHE_orig_path);
+	return file_get_contents($htaccess_file);
+}
+
+function fa_sanitized_rule($fa_rule) {
+	$fa_rule = trim($fa_rule);
+	$fa_rule = str_replace('\\\\', '\\', $fa_rule);
+	$fa_rule = str_replace('\"', '"', $fa_rule);
 	
-	//@clearstatcache();
-	//error_log($data);
+	return $fa_rule;
+}
+
+/***** Vytvoření nového htaccess souboru ******************************/
+function WPHE_WriteNewHtaccess($fa_first_rule, $fa_last_rule){
+	$htaccess_file = fa_get_htaccess_file_path();
+	$data = fa_get_htaccess_content();
 	
-	$WPHE_new_content = trim($WPHE_new_content);
-	$WPHE_new_content = str_replace('\\\\', '\\', $WPHE_new_content);
-	$WPHE_new_content = str_replace('\"', '"', $WPHE_new_content);
-	$WPHE_write_success = file_put_contents($WPHE_orig_path, PHP_EOL . $WPHE_new_content, FILE_APPEND);
+	if ($data == false) {
+		return false;
+	}
+	
+	$fa_first_rule = fa_sanitized_rule($fa_first_rule);
+	file_put_contents($htaccess_file, $fa_first_rule . PHP_EOL . $data);
+	
+	
+	$fa_last_rule = fa_sanitized_rule($fa_last_rule);
+	$fa_write_success = file_put_contents($htaccess_file, PHP_EOL . $fa_last_rule, FILE_APPEND);
 	@clearstatcache();
-	if(!file_exists($WPHE_orig_path) && $WPHE_write_success === false)
+	if(!file_exists($htaccess_file) && $fa_write_success === false)
 	{
 		//error_log('file not exists');
-		unset($WPHE_orig_path);
-		unset($WPHE_new_content);
+		unset($htaccess_file);
+		unset($fa_first_rule);
+		unset($fa_last_rule);
 		unset($data);
-		unset($WPHE_write_success);
+		unset($fa_write_success);
 		return false;
 	}else{
 		//error_log('file existed');
-		unset($WPHE_orig_path);
-		unset($WPHE_new_content);
+		unset($htaccess_file);
+		unset($fa_first_rule);
+		unset($fa_last_rule);
 		unset($data);
-		unset($WPHE_write_success);
+		unset($fa_write_success);
 		return true;
 	}
 }
 
-function WPHE_RemoveHtaccess($WPHE_rule){
-	global $wp_rewrite;
+function WPHE_RemoveHtaccess($fa_first_rule, $fa_last_rule){
+	//global $wp_rewrite;
 
-	$home_path = get_home_path();
-	$htaccess_file = $home_path.'.htaccess';
-	$WPHE_orig_path = $htaccess_file; 
-	
-	if(file_exists($WPHE_orig_path))
-	{
-		if(is_writable($WPHE_orig_path))
-		{
-			//error_log('is_writable');
-			//@unlink($WPHE_orig_path);
-		}else{
-			//error_log('unwritable');
-			@chmod($WPHE_orig_path, 0666);
-			@unlink($WPHE_orig_path);
-		}
+	$htaccess_file = fa_get_htaccess_file_path();
+	$data = fa_get_htaccess_content();
+
+	if ($data == false) {
+		return false;
 	}
 	
-	if ( !$f = fopen( $WPHE_orig_path, 'r' ) ) {
-		//error_log('cant open');
-		return false;
-	}			
+	$fa_first_rule = fa_sanitized_rule($fa_first_rule);
+	$fa_last_rule = fa_sanitized_rule($fa_last_rule);
 	
-	//error_log('WPHE_orig_path', $WPHE_orig_path, ABSPATH, $_SERVER["DOCUMENT_ROOT"]);
-	$data = file_get_contents($WPHE_orig_path);
-	
-	//@clearstatcache();
-	//error_log($data);
-	
-	$WPHE_rule = trim($WPHE_rule);
-	$WPHE_rule = str_replace('\\\\', '\\', $WPHE_rule);
-	$WPHE_rule = str_replace('\"', '"', $WPHE_rule);
-	
-	// remove matching rules and EOL
-	while (strpos($data, $WPHE_rule) !== false) {
-		$start_replace = strpos($data, $WPHE_rule);
-		$replace_length = strlen($WPHE_rule);
+	// remove matching prevent rules and EOL
+	while (strpos($data, $fa_first_rule) !== false) {
+		$start_replace = strpos($data, $fa_first_rule);
+		$replace_length = strlen($fa_first_rule);
 	
 		//error_log('found new rule, removing..');
-		$data = str_replace($WPHE_rule, '', $data);
+		$data = str_replace($fa_first_rule, '', $data);
+		
+		while (substr($data, start_replace + 1, 1) == PHP_EOL) {
+			$data = substr_replace ($data, '', start_replace + 1, 1);
+			//error_log('after remove rule: ', $data);
+		}
+
+	}
+	
+	// remove matching prevent rules and EOL
+	while (strpos($data, $fa_last_rule) !== false) {
+		$start_replace = strpos($data, $fa_last_rule);
+		$replace_length = strlen($fa_last_rule);
+	
+		//error_log('found new rule, removing..');
+		$data = str_replace($fa_last_rule, '', $data);
 		
 		while (substr($data, start_replace - 1, 1) == PHP_EOL) {
 			$data = substr_replace ($data, '', start_replace - 1, 1);
@@ -297,22 +305,24 @@ function WPHE_RemoveHtaccess($WPHE_rule){
 
 	}
 	
-	$WPHE_write_success = file_put_contents($WPHE_orig_path, $data);
+	$fa_write_success = file_put_contents($htaccess_file, $data);
 	@clearstatcache();
-	if(!file_exists($WPHE_orig_path) && $WPHE_write_success === false)
+	if(!file_exists($htaccess_file) && $fa_write_success === false)
 	{
 		//error_log('file not exists');
-		unset($WPHE_orig_path);
-		unset($WPHE_new_content);
+		unset($htaccess_file);
+		unset($fa_first_rule);
+		unset($fa_last_rule);
 		unset($data);
-		unset($WPHE_write_success);
+		unset($fa_write_success);
 		return false;
 	}else{
 		//error_log('file existed');
-		unset($WPHE_orig_path);
-		unset($WPHE_new_content);
+		unset($htaccess_file);
+		unset($fa_first_rule);
+		unset($fa_last_rule);
 		unset($data);
-		unset($WPHE_write_success);
+		unset($fa_write_success);
 		return true;
 	}
 }
@@ -323,6 +333,12 @@ function fa_generate_prevent_rule($site_url, $file_url) {
 	$redirect_url_rule = str_replace('.', '\.', $redirect_url_rule);
 	$redirect_url_rule .= '$ - [F,L]';			
 	$redirect_url_rule = 'RewriteRule ' . $redirect_url_rule;
+	return $redirect_url_rule;
+}
+
+function fa_generate_redirect_download_page($generated_file_code) {
+	$redirect_url_rule = 'RewriteRule ^private/' . $generated_file_code;
+	$redirect_url_rule .= ' wp-content/plugins/fileAdvance/download.php?download_file=' . $generated_file_code . ' [R=301,L]';
 	return $redirect_url_rule;
 }
 

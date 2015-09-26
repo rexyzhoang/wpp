@@ -1,5 +1,10 @@
 <?php
 
+include 'includes/fileAdvanceDB.php';
+include 'includes/javascriptLoader.php';
+include 'includes/helper.php';
+include 'includes/advanceFileRepository.php';
+
 /*
 Plugin Name: File Advance
 Plugin URI: https://github.com/gaupoit/wpp
@@ -9,13 +14,14 @@ Author: HTH
 Author URI: https://github.com/gaupoit/wpp
 License: GPL
 */
-
-include 'includes/fileAdvanceDB.php';
-include 'includes/javascriptLoader.php';
-include 'includes/helper.php';
-include 'includes/advanceFileRepository.php';
-
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
+defined('FILE_ADVANCE_DIR') || define('FILE_ADVANCE_DIR', realpath(dirname(__FILE__) . '/..'));
+define('FILE_ADVANCE_FILE', 'fileAdvance/fileAdvance.php');
+define('FILE_ADVANCE_INC_DIR', W3TC_DIR . '/includes');
+
+defined('WP_CONTENT_DIR') || define('WP_CONTENT_DIR', realpath(FILE_ADVANCE_DIR . '/../..'));
+
 add_filter("manage_upload_columns", 'upload_columns');
 add_action("manage_media_custom_column", 'media_custom_columns', 0, 2);
 add_action('admin_enqueue_scripts', 'admin_load_js');
@@ -28,9 +34,10 @@ register_activation_hook(__FILE__, 'jal_install');
 //require_once dirname(__FILE__) . '/includes/define.php';
 
 require_once dirname(__FILE__) . '/includes/function.php';
+//require_once dirname(__FILE__) . '/download.php';
 
 // TEMPORARY THIS HOOK NOT WORK
-//add_filter('mod_rewrite_rules', 'fa_htaccess_contents');
+add_filter('mod_rewrite_rules', 'fa_htaccess_contents');
 function fa_htaccess_contents( $rules ) {
     $my_content = <<<EOD
     # BEGIN WordPress
@@ -89,18 +96,20 @@ function so_wp_ajax_function(){
   		);
   } else {
   	$file_result = get_advance_file_by_post_id($file_info['post_id']);
+  	$generated_file_code = $file_result->url;
   	$file_result->url = site_url() . '/' . $file_result->url;
 		
 		// TODO: better extract to method
 		$post = get_post($_POST['id']);
 		$file_url = $post->guid;
-		$redirect_url_rule = fa_generate_prevent_rule(site_url(), $file_url);
+		$redirect_download_rule = fa_generate_redirect_download_page($generated_file_code);
+		$redirect_prevent_rule = fa_generate_prevent_rule(site_url(), $file_url);
 		
 		// write new rule $redirect_url_rule to .htaccess file
   	if ($file_result->is_prevented == "1") {  					
-		WPHE_WriteNewHtaccess($redirect_url_rule);			
+		WPHE_WriteNewHtaccess($redirect_download_rule, $redirect_prevent_rule);			
   	} else {
-  		WPHE_RemoveHtaccess($redirect_url_rule);
+  		WPHE_RemoveHtaccess($redirect_download_rule, $redirect_prevent_rule);
 	}
   }
   wp_send_json($file_result);
@@ -137,4 +146,6 @@ function uninstall() {
   $table_name = $wpdb->prefix . 'advancefiles';
   $wpdb->query("DROP TABLE IF EXISTS $table_name");
 }
+
+
 ?>
