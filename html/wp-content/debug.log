@@ -1,0 +1,7 @@
+[25-Sep-2015 17:55:20 UTC] PHP Parse error:  syntax error, unexpected '<<' (T_SL) in /var/www/html/wp-content/plugins/fileAdvance/includes/function.php on line 207
+[25-Sep-2015 17:55:20 UTC] PHP Stack trace:
+[25-Sep-2015 17:55:20 UTC] PHP   1. {main}() /var/www/html/wp-admin/admin-ajax.php:0
+[25-Sep-2015 17:55:20 UTC] PHP   2. require_once() /var/www/html/wp-admin/admin-ajax.php:22
+[25-Sep-2015 17:55:20 UTC] PHP   3. require_once() /var/www/html/wp-load.php:37
+[25-Sep-2015 17:55:20 UTC] PHP   4. require_once() /var/www/html/wp-config.php:114
+[25-Sep-2015 17:55:20 UTC] PHP   5. include_once() /var/www/html/wp-settings.php:215

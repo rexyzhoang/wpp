@@ -1,3 +1,4 @@
 .vagrant
 html/wp-content/uploads
 html/.htaccess
+html/wp-content/debug.log

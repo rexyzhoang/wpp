@@ -107,4 +107,34 @@ function so_wp_ajax_function(){
   wp_die(); // ajax call must die to avoid trailing 0 in your response
 }
 
+register_uninstall_hook(    __FILE__, 'WCM_Setup_Demo_on_uninstall' );
+function WCM_Setup_Demo_on_uninstall()
+{
+    if ( ! current_user_can( 'activate_plugins' ) )
+        return;
+    check_admin_referer( 'bulk-plugins' );
+
+    // Important: Check if the file is the one
+    // that was registered during the uninstall hook.
+    if ( __FILE__ != WP_UNINSTALL_PLUGIN )
+        return;
+
+    # Uncomment the following line to see the function in action
+    exit( var_dump( $_GET ) );
+}
+/**
+ * Check for hook
+ */
+// if ( function_exists('register_uninstall_hook') )
+register_uninstall_hook(__FILE__, 'uninstall');
+
+
+ /**
+ * Delete options in database
+ */
+function uninstall() {
+  global $wpdb;
+  $table_name = $wpdb->prefix . 'advancefiles';
+  $wpdb->query("DROP TABLE IF EXISTS $table_name");
+}
 ?>
