@@ -1,10 +1,5 @@
 <?php
 
-include 'includes/fileAdvanceDB.php';
-include 'includes/javascriptLoader.php';
-include 'includes/helper.php';
-include 'includes/advanceFileRepository.php';
-
 /*
 Plugin Name: File Advance
 Plugin URI: https://github.com/gaupoit/wpp
@@ -14,6 +9,12 @@ Author: HTH
 Author URI: https://github.com/gaupoit/wpp
 License: GPL
 */
+
+include 'includes/fileAdvanceDB.php';
+include 'includes/javascriptLoader.php';
+include 'includes/helper.php';
+include 'includes/advanceFileRepository.php';
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 add_filter("manage_upload_columns", 'upload_columns');
 add_action("manage_media_custom_column", 'media_custom_columns', 0, 2);
@@ -29,7 +30,7 @@ register_activation_hook(__FILE__, 'jal_install');
 require_once dirname(__FILE__) . '/includes/function.php';
 
 // TEMPORARY THIS HOOK NOT WORK
-add_filter('mod_rewrite_rules', 'fa_htaccess_contents');
+//add_filter('mod_rewrite_rules', 'fa_htaccess_contents');
 function fa_htaccess_contents( $rules ) {
     $my_content = <<<EOD
     # BEGIN WordPress

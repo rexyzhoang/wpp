@@ -204,25 +204,25 @@ function WPHE_WriteNewHtaccess($WPHE_new_content){
 	{
 		if(is_writable($WPHE_orig_path))
 		{
-			error_log('is_writable');
+			//error_log('is_writable');
 			//@unlink($WPHE_orig_path);
 		}else{
-			error_log('unwritable');
+			//error_log('unwritable');
 			@chmod($WPHE_orig_path, 0666);
 			@unlink($WPHE_orig_path);
 		}
 	}
 	
 	if ( !$f = fopen( $WPHE_orig_path, 'r' ) ) {
-		error_log('cant open');
+		//error_log('cant open');
 		return false;
 	}			
 	
-	error_log('WPHE_orig_path', $WPHE_orig_path, ABSPATH, $_SERVER["DOCUMENT_ROOT"]);
+	//error_log('WPHE_orig_path', $WPHE_orig_path, ABSPATH, $_SERVER["DOCUMENT_ROOT"]);
 	$data = file_get_contents($WPHE_orig_path);
 	
 	//@clearstatcache();
-	error_log($data);
+	//error_log($data);
 	
 	$WPHE_new_content = trim($WPHE_new_content);
 	$WPHE_new_content = str_replace('\\\\', '\\', $WPHE_new_content);
@@ -231,14 +231,14 @@ function WPHE_WriteNewHtaccess($WPHE_new_content){
 	@clearstatcache();
 	if(!file_exists($WPHE_orig_path) && $WPHE_write_success === false)
 	{
-		error_log('file not exists');
+		//error_log('file not exists');
 		unset($WPHE_orig_path);
 		unset($WPHE_new_content);
 		unset($data);
 		unset($WPHE_write_success);
 		return false;
 	}else{
-		error_log('file existed');
+		//error_log('file existed');
 		unset($WPHE_orig_path);
 		unset($WPHE_new_content);
 		unset($data);
@@ -258,25 +258,25 @@ function WPHE_RemoveHtaccess($WPHE_rule){
 	{
 		if(is_writable($WPHE_orig_path))
 		{
-			error_log('is_writable');
+			//error_log('is_writable');
 			//@unlink($WPHE_orig_path);
 		}else{
-			error_log('unwritable');
+			//error_log('unwritable');
 			@chmod($WPHE_orig_path, 0666);
 			@unlink($WPHE_orig_path);
 		}
 	}
 	
 	if ( !$f = fopen( $WPHE_orig_path, 'r' ) ) {
-		error_log('cant open');
+		//error_log('cant open');
 		return false;
 	}			
 	
-	error_log('WPHE_orig_path', $WPHE_orig_path, ABSPATH, $_SERVER["DOCUMENT_ROOT"]);
+	//error_log('WPHE_orig_path', $WPHE_orig_path, ABSPATH, $_SERVER["DOCUMENT_ROOT"]);
 	$data = file_get_contents($WPHE_orig_path);
 	
 	//@clearstatcache();
-	error_log($data);
+	//error_log($data);
 	
 	$WPHE_rule = trim($WPHE_rule);
 	$WPHE_rule = str_replace('\\\\', '\\', $WPHE_rule);
@@ -287,12 +287,12 @@ function WPHE_RemoveHtaccess($WPHE_rule){
 		$start_replace = strpos($data, $WPHE_rule);
 		$replace_length = strlen($WPHE_rule);
 	
-		error_log('found new rule, removing..');
+		//error_log('found new rule, removing..');
 		$data = str_replace($WPHE_rule, '', $data);
 		
 		while (substr($data, start_replace - 1, 1) == PHP_EOL) {
 			$data = substr_replace ($data, '', start_replace - 1, 1);
-			error_log('after remove rule: ', $data);
+			//error_log('after remove rule: ', $data);
 		}
 
 	}
@@ -301,14 +301,14 @@ function WPHE_RemoveHtaccess($WPHE_rule){
 	@clearstatcache();
 	if(!file_exists($WPHE_orig_path) && $WPHE_write_success === false)
 	{
-		error_log('file not exists');
+		//error_log('file not exists');
 		unset($WPHE_orig_path);
 		unset($WPHE_new_content);
 		unset($data);
 		unset($WPHE_write_success);
 		return false;
 	}else{
-		error_log('file existed');
+		//error_log('file existed');
 		unset($WPHE_orig_path);
 		unset($WPHE_new_content);
 		unset($data);
@@ -329,6 +329,6 @@ function fa_generate_prevent_rule($site_url, $file_url) {
 /****** debug funkce **************************************************/
 function WPHE_Debug($data){
 	echo '<pre>';
-	error_log($data);
+	//error_log($data);
 	echo '</pre>';
 }
