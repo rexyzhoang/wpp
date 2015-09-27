@@ -69,12 +69,12 @@ function media_custom_columns($column_name, $id) {
 	$post = get_post($id);	
 	$advance_file = get_advance_file_by_post_id($post->ID);
 	$checked = isset($advance_file) && $advance_file->is_prevented;
-	$url = isset($advance_file) && $checked ? site_url() . '/' . $advance_file->url : '';
+	$url = isset($advance_file) && $checked ? site_url() . '/private/' . $advance_file->url : '';
 	if($column_name != 'direct_access')
 		return;
 		?>
 		<input id="ckb_<?php echo $post->ID ?>" <?php if($checked) echo 'checked="checked"';?> onclick="customFile.preventFile('<?php echo $post->ID ?>')" type="checkbox"/><?php _e('Prevent direct access'); ?>
-		<div><label id="custom_url_<?php echo $post->ID ?>"><?php echo $url ?></label></div>	
+		<div><a id="custom_url_<?php echo $post->ID ?>" href="<?php echo $url ?>"><?php echo $url ?></a></div>	
 		<?php
 }
 function so_wp_ajax_function(){
@@ -97,7 +97,7 @@ function so_wp_ajax_function(){
   } else {
   	$file_result = get_advance_file_by_post_id($file_info['post_id']);
   	$generated_file_code = $file_result->url;
-  	$file_result->url = site_url() . '/' . $file_result->url;
+  	$file_result->url = site_url() . '/private/' . $file_result->url;
 		
 		// TODO: better extract to method
 		$post = get_post($_POST['id']);

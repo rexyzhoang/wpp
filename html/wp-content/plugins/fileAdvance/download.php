@@ -196,12 +196,18 @@ set_time_limit(0); // disable the time limit for this script
 $home_url = get_home_url();
 $private_url = $_GET['download_file'];
 $advance_file = get_advance_file_by_url($private_url);
+//var_dump($advance_file);
 if(isset($advance_file)) {
     $post_id = $advance_file->post_id;
     $post = get_post_by_id($post_id);
+
     if(isset($post)) {
         downLoadFile($post);
+    } else {
+    	echo '<h2>Sorry! Invalid post!</h2>';
     }
+} else {
+	echo '<h2>Sorry! Invalid url!</h2>';
 }
 
 function downLoadFile($post) {
@@ -213,7 +219,11 @@ function downLoadFile($post) {
         $fsize = filesize($fullPath);
         $path_parts = pathinfo($fullPath);
         $ext = strtolower($path_parts["extension"]);
-        $mime_type = $mime_types[$ext];
+        
+        // temporary no need to hardcode mime type, just comment in case we need
+        //$mime_type = $mime_types[$ext];
+        
+        $mime_type = $post->post_mime_type;
         header("Content-type: " . $mime_type);
         header("Content-Disposition: attachment; filename=\"".$path_parts["basename"]."\""); // use 'attachment' to force a file download
         
