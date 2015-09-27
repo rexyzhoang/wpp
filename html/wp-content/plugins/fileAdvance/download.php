@@ -1,4 +1,6 @@
 <?php
+require_once( explode( "wp-content" , __FILE__ )[0] . "wp-load.php" );
+require_once('includes/advanceFileRepository.php');
 
 $mime_types = array("323" => "text/h323",
 "acx" => "application/internet-property-stream",
@@ -191,47 +193,39 @@ $mime_types = array("323" => "text/h323",
 ignore_user_abort(true);
 set_time_limit(0); // disable the time limit for this script
 
-// echo get_option('site_url');
-$path = "/Applications/XAMPP/xamppfiles/htdocs/wordpress/wp-content/uploads/2015/09/"; // change the path to fit your websites document structure
-$dl_file = preg_replace("([^\w\s\d\-_~,;:\[\]\(\].]|[\.]{2,})", '', $_GET['download_file']); // simple file name validation
-$dl_file = filter_var($dl_file, FILTER_SANITIZE_URL); // Remove (more) invalid characters
-$fullPath = $path.$dl_file;
-//echo $fullPath;
-// $fullPath = $path;
-
-if ($fd = fopen ($fullPath, "r")) {
-    $fsize = filesize($fullPath);
-    $path_parts = pathinfo($fullPath);
-    $ext = strtolower($path_parts["extension"]);
-    //var_dump($fullPath, $ext);
-    $mime_type = $mime_types[$ext];
-    header("Content-type: " . $mime_type);
-    header("Content-Disposition: attachment; filename=\"".$path_parts["basename"]."\""); // use 'attachment' to force a file download
-	
-	if ($mime_type == 'application/octet-stream') {
-		header("Content-Disposition: filename=\"".$path_parts["basename"]."\"");
-	}
-	
-	// switch ($ext) {
-//         case "pdf":
-//         header("Content-type: application/pdf");
-//         header("Content-Disposition: attachment; filename=\"".$path_parts["basename"]."\""); // use 'attachment' to force a file download
-//         break;
-//         case "png":
-//         header("Content-type: image/png");
-//         header("Content-Disposition: attachment; filename=\"".$path_parts["basename"]."\""); // use 'attachment' to force a file download
-//         break;
-//         // add more headers for other content types here
-//         default;
-//         header("Content-type: application/octet-stream");
-//         header("Content-Disposition: filename=\"".$path_parts["basename"]."\"");
-//         break;
-//     }
-    header("Content-length: $fsize");
-    header("Cache-control: private"); //use this to open files directly
-    while(!feof($fd)) {
-         $buffer = fread($fd, 2048);
-         echo $buffer;     }
+$home_url = get_home_url();
+$private_url = $_GET['download_file'];
+$advance_file = get_advance_file_by_url($private_url);
+if(isset($advance_file)) {
+    $post_id = $advance_file->post_id;
+    $post = get_post_by_id($post_id);
+    if(isset($post)) {
+        downLoadFile($post);
+    }
 }
-fclose ($fd);
-exit;
+
+function downLoadFile($post) {
+    $fullPath = $post->guid;
+    $site_url = get_site_url(); 
+    $wpDir = ABSPATH; 
+    $fullPath = str_replace($site_url . '/', $wpDir, $fullPath);
+    if ($fd = fopen ($fullPath, "r")) {
+        $fsize = filesize($fullPath);
+        $path_parts = pathinfo($fullPath);
+        $ext = strtolower($path_parts["extension"]);
+        $mime_type = $mime_types[$ext];
+        header("Content-type: " . $mime_type);
+        header("Content-Disposition: attachment; filename=\"".$path_parts["basename"]."\""); // use 'attachment' to force a file download
+        
+        if ($mime_type == 'application/octet-stream') {
+            header("Content-Disposition: filename=\"".$path_parts["basename"]."\"");
+        }
+        header("Content-length: $fsize");
+        header("Cache-control: private"); //use this to open files directly
+        while(!feof($fd)) {
+             $buffer = fread($fd, 2048);
+             echo $buffer;     }
+    }
+    fclose ($fd);
+    exit;
+}

@@ -39,6 +39,14 @@ function get_advance_file_by_post_id($post_id) {
 
 }
 
+function get_advance_file_by_url($url) {
+	global $wpdb;
+	$wpdb->show_errors();
+	$table_name = $wpdb->prefix . 'advancefiles';
+	$advance_file = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE url LIKE %s", $url, ARRAY_A) );
+	return $advance_file; 
+}
+
 function update_advance_file_by_post_id($fileInfo) {
 	global $wpdb;
 	$table_name = $wpdb->prefix . 'advancefiles';
