@@ -39,6 +39,8 @@ require_once dirname(__FILE__) . '/includes/function.php';
 // TEMPORARY THIS HOOK NOT WORK
 add_filter('mod_rewrite_rules', 'fa_htaccess_contents');
 function fa_htaccess_contents( $rules ) {
+	// Temporary comment
+	/*
     $my_content = <<<EOD
     # BEGIN WordPress
 <IfModule mod_rewrite.c>
@@ -54,6 +56,7 @@ EOD;
 	$rules = $my_content . $rules;
 	global $wp_rewrite;
 	$wp_rewrite->flush_rules();
+	*/
     return $rules;
 }
 
