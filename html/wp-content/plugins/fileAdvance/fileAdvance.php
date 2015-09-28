@@ -16,11 +16,11 @@ License: GPL
 */
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-defined('FILE_ADVANCE_DIR') || define('FILE_ADVANCE_DIR', realpath(dirname(__FILE__) . '/..'));
-define('FILE_ADVANCE_FILE', 'fileAdvance/fileAdvance.php');
-define('FILE_ADVANCE_INC_DIR', W3TC_DIR . '/includes');
+//defined('FILE_ADVANCE_DIR') || define('FILE_ADVANCE_DIR', realpath(dirname(__FILE__) . '/..'));
+//define('FILE_ADVANCE_FILE', 'fileAdvance/fileAdvance.php');
+//define('FILE_ADVANCE_INC_DIR', W3TC_DIR . '/includes');
 
-defined('WP_CONTENT_DIR') || define('WP_CONTENT_DIR', realpath(FILE_ADVANCE_DIR . '/../..'));
+//defined('WP_CONTENT_DIR') || define('WP_CONTENT_DIR', realpath(FILE_ADVANCE_DIR . '/../..'));
 
 add_filter("manage_upload_columns", 'upload_columns');
 add_action("manage_media_custom_column", 'media_custom_columns', 0, 2);
