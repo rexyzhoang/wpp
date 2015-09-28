@@ -208,7 +208,7 @@ function fa_get_htaccess_content() {
 	}
 	
 	if(!is_writable($htaccess_file)) {
-		chmod($htaccess_file, 0666);
+		@chmod($htaccess_file, 0666);
 	}
 	
 	if ( !$f = fopen( $htaccess_file, 'r' ) ) {
