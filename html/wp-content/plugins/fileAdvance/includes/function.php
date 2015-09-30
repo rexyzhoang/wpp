@@ -198,6 +198,26 @@ function fa_get_htaccess_file_path() {
 	return $htaccess_file;
 }
 
+function fa_htaccess_writable() {
+	$htaccess_file = fa_get_htaccess_file_path();
+	
+	if (!file_exists($htaccess_file)) {
+		return '.htaccess file not existed';
+	}
+	
+	if(is_writable($htaccess_file)) {
+		return true;		
+	}
+	
+	@chmod($htaccess_file, 0666);
+	
+	if (!is_writable($htaccess_file)) {
+		return 'Please ask host manager to grant write permission for .htaccess file.';
+	}
+	
+	return true;
+}
+
 function fa_get_htaccess_content() {
 	//global $wp_rewrite;
 

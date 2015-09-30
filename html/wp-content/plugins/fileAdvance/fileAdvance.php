@@ -28,6 +28,13 @@ add_action('admin_enqueue_scripts', 'admin_load_js');
 add_action( 'wp_ajax_myaction', 'so_wp_ajax_function' );
 register_activation_hook(__FILE__, 'jal_install');
 
+function jal_install() {
+	$is_valid_activate = fa_htaccess_writable();
+	if ($is_valid_activate != true) {
+		wp_die($is_valid_activate);
+	}
+}
+
 /**
 * Require plugin configuration
 */
