@@ -78,10 +78,10 @@ function so_wp_ajax_function() {
         
         // write new rule $redirect_url_rule to .htaccess file
         if ($file_result->is_prevented === "1") {
-            WPHE_WriteNewHtaccess($redirect_download_rule, $redirect_prevent_rule);
+            fa_WriteNewHtaccess($redirect_download_rule, $redirect_prevent_rule);
         } 
         else {
-            WPHE_RemoveHtaccess($redirect_download_rule, $redirect_prevent_rule);
+            fa_RemoveHtaccess($redirect_download_rule, $redirect_prevent_rule);
         }
     }
     wp_send_json($file_result);
