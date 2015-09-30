@@ -3,6 +3,11 @@ global $jal_db_version;
 $jal_db_version = '1.0';
 
 function jal_install() {
+	$is_valid_activate = fa_htaccess_writable();
+	if ($is_valid_activate != true) {
+		wp_die($is_valid_activate);
+	}
+
 	global $wpdb;
 	global $jal_db_version;
 

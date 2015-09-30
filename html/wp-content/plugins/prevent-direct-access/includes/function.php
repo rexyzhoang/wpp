@@ -3,15 +3,15 @@ if (!defined('ABSPATH')) die('You do not have sufficient permissions to access t
 
 // TEMPORARY DONT USE
 /***** Vytvoření zálohy htaccess souboru ******************************/
-function WPHE_CreateBackup() {
+function fa_CreateBackup() {
     $WPHE_backup_path = ABSPATH . 'wp-content/htaccess.backup';
     $WPHE_orig_path = ABSPATH . '.htaccess';
     @clearstatcache();
     
-    WPHE_CreateSecureWPcontent();
+    fa_CreateSecureWPcontent();
     
     if (file_exists($WPHE_backup_path)) {
-        WPHE_DeleteBackup();
+        fa_DeleteBackup();
         
         if (file_exists(ABSPATH . '.htaccess')) {
             $htaccess_content_orig = @file_get_contents($WPHE_orig_path, false, NULL);
@@ -76,7 +76,7 @@ function WPHE_CreateBackup() {
 
 // TEMPORARY DONT USE
 /***** Vytvoření htaccess souboru ve složce wp-content ****************/
-function WPHE_CreateSecureWPcontent() {
+function fa_CreateSecureWPcontent() {
     $wphe_secure_path = ABSPATH . 'wp-content/.htaccess';
     $wphe_secure_text = '
 # WP Htaccess Editor - Secure backups
@@ -132,7 +132,7 @@ deny from all
 
 // TEMPORARY DONT USE
 /***** Obnova zálohy htaccess souboru *********************************/
-function WPHE_RestoreBackup() {
+function fa_RestoreBackup() {
     $wphe_backup_path = ABSPATH . 'wp-content/htaccess.backup';
     $WPHE_orig_path = ABSPATH . '.htaccess';
     @clearstatcache();
@@ -153,14 +153,14 @@ function WPHE_RestoreBackup() {
             }
         }
         $wphe_htaccess_content_backup = @file_get_contents($wphe_backup_path, false, NULL);
-        if (WPHE_WriteNewHtaccess($wphe_htaccess_content_backup) === false) {
+        if (fa_WriteNewHtaccess($wphe_htaccess_content_backup) === false) {
             unset($wphe_success);
             unset($WPHE_orig_path);
             unset($wphe_backup_path);
             return $wphe_htaccess_content_backup;
         } 
         else {
-            WPHE_DeleteBackup();
+            fa_DeleteBackup();
             unset($wphe_success);
             unset($wphe_htaccess_content_backup);
             unset($WPHE_orig_path);
@@ -172,7 +172,7 @@ function WPHE_RestoreBackup() {
 
 // TEMPORARY DONT USE
 /***** Smazání záložního souboru **************************************/
-function WPHE_DeleteBackup() {
+function fa_DeleteBackup() {
     $wphe_backup_path = ABSPATH . 'wp-content/htaccess.backup';
     @clearstatcache();
     
@@ -211,6 +211,26 @@ function fa_get_htaccess_file_path() {
     return $htaccess_file;
 }
 
+function fa_htaccess_writable() {
+	$htaccess_file = fa_get_htaccess_file_path();
+	
+	if (!file_exists($htaccess_file)) {
+		return '.htaccess file not existed';
+	}
+	
+	if(is_writable($htaccess_file)) {
+		return true;		
+	}
+	
+	@chmod($htaccess_file, 0666);
+	
+	if (!is_writable($htaccess_file)) {
+		return 'Please ask host manager to grant write permission for .htaccess file.';
+	}
+	
+	return true;
+}
+
 function fa_get_htaccess_content() {
     
     //global $wp_rewrite;
@@ -241,7 +261,7 @@ function fa_sanitized_rule($fa_rule) {
 }
 
 /***** Vytvoření nového htaccess souboru ******************************/
-function WPHE_WriteNewHtaccess($fa_first_rule, $fa_last_rule) {
+function fa_WriteNewHtaccess($fa_first_rule, $fa_last_rule) {
     $htaccess_file = fa_get_htaccess_file_path();
     $data = fa_get_htaccess_content();
     
@@ -277,7 +297,7 @@ function WPHE_WriteNewHtaccess($fa_first_rule, $fa_last_rule) {
     }
 }
 
-function WPHE_RemoveHtaccess($fa_first_rule, $fa_last_rule) {
+function fa_RemoveHtaccess($fa_first_rule, $fa_last_rule) {
     
     //global $wp_rewrite;
     
@@ -358,12 +378,12 @@ function fa_generate_prevent_rule($site_url, $file_url) {
 
 function fa_generate_redirect_download_page($generated_file_code) {
     $redirect_url_rule = 'RewriteRule ^private/' . $generated_file_code;
-    $redirect_url_rule.= ' wp-content/plugins/fileAdvance/download.php?download_file=' . $generated_file_code . ' [R=301,L]';
+    $redirect_url_rule.= ' wp-content/plugins/prevent-direct-access/download.php?download_file=' . $generated_file_code . ' [R=301,L]';
     return $redirect_url_rule;
 }
 
 /****** debug funkce **************************************************/
-function WPHE_Debug($data) {
+function fa_Debug($data) {
     echo '<pre>';
     
     //error_log($data);
