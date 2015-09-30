@@ -13,6 +13,7 @@ if (!defined('ABSPATH')) exit;
 include 'includes/class-repository.php';
 include 'includes/java-script-loader.php';
 include 'includes/helper.php';
+include 'includes/db-init.php';
 require_once dirname(__FILE__) . '/includes/function.php';
 
 add_filter("manage_upload_columns", 'upload_columns');
