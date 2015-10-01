@@ -1,6 +1,7 @@
 (function() {
 	var customFile = {
-		preventFile : _preventFile
+		preventFile : _preventFile,
+		copyToClipboard: _copyToClipboard		
 	};
 	function _preventFile(fileId){
 		var checkBoxId = "#ckb_" + fileId;
@@ -20,11 +21,14 @@
 		      	alert(data.message);
 		      } else {
 		      	var labelId = "#custom_url_" + data.post_id;
+		      	var btnCopyId = '#btn_copy_' + data.post_id;
 		      	if(data.is_prevented === "1"){
 		      		jQuery(labelId).show();
-		      		jQuery(labelId).text(data.url);	
+		      		jQuery(labelId).val(data.url);	
+		      		jQuery(btnCopyId).show();
 		      	} else {
 		      		jQuery(labelId).hide();
+		      		jQuery(btnCopyId).hide();
 		      	}
 		      }
 		    },
@@ -35,4 +39,13 @@
 		  });
 	}
 	window.customFile = customFile;
+		
+	function _copyToClipboard(element) {
+  		var $temp = jQuery("<input>");
+  		jQuery("body").append($temp);
+  		$temp.val(jQuery(element).val()).select();
+  		document.execCommand("copy");
+  		$temp.remove();
+	}
+	
 })(window);
