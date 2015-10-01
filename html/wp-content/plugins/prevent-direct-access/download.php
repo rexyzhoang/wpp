@@ -1,6 +1,6 @@
 <?php
 require_once( explode( "wp-content" , __FILE__ )[0] . "wp-load.php" );
-require_once('includes/advanceFileRepository.php');
+require_once('includes/class-repository.php');
 
 $mime_types = array("323" => "text/h323",
 "acx" => "application/internet-property-stream",
@@ -195,11 +195,12 @@ set_time_limit(0); // disable the time limit for this script
 
 $home_url = get_home_url();
 $private_url = $_GET['download_file'];
-$advance_file = get_advance_file_by_url($private_url);
+$repository = new Repository;
+$advance_file = $repository->get_advance_file_by_url($private_url);
 //var_dump($advance_file);
 if(isset($advance_file)) {
     $post_id = $advance_file->post_id;
-    $post = get_post_by_id($post_id);
+    $post = $repository->get_post_by_id($post_id);
 
     if(isset($post)) {
         downLoadFile($post);
