@@ -4,6 +4,7 @@ $jal_db_version = '1.0';
 
 function jal_install() {	
 	pda_validate_activation();
+	flush_rewrite_rules();
 
 	global $wpdb;
 	global $jal_db_version;

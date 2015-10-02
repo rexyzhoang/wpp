@@ -26,7 +26,7 @@ register_uninstall_hook(__FILE__, 'uninstall');
 add_filter('mod_rewrite_rules', 'fa_htaccess_contents');
 
 function fa_htaccess_contents($rules) {
-    return $rules;
+    return $rules . "Options -Indexes" . PHP_EOL;
 }
 
 function upload_columns($columns) {
