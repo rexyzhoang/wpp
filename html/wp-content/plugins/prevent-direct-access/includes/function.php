@@ -370,7 +370,7 @@ function fa_RemoveHtaccess($fa_first_rule, $fa_last_rule) {
 function fa_generate_prevent_rule($site_url, $file_url) {
     $site_url.= '/';
     $redirect_url_rule = str_replace($site_url, '^', $file_url);
-    $redirect_url_rule = str_replace('.', '\.', $redirect_url_rule);
+    $redirect_url_rule = str_replace('.', '(-[0-9]+x[0-9]+)?\.', $redirect_url_rule);
     $redirect_url_rule.= '$ - [F,L]';
     $redirect_url_rule = 'RewriteRule ' . $redirect_url_rule;
     return $redirect_url_rule;
