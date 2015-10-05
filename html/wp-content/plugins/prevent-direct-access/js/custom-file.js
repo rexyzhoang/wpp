@@ -38,6 +38,7 @@
 		    }
 		  });
 	}
+
 	window.customFile = customFile;
 		
 	function _copyToClipboard(element) {
