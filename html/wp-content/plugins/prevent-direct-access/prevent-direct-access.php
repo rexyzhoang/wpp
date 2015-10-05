@@ -49,19 +49,12 @@ function media_custom_columns($column_name, $id) {
     if ($checked) echo 'checked="checked"'; ?> onclick="customFile.preventFile('<?php
     echo $post->ID ?>')" type="checkbox"/><?php
     _e('Prevent direct access'); ?>
-    <div>Access your file via this link: </div>
+    <div class="custom_url" style="<?php if(!$checked) echo 'display: none;'?>">Access your file via this link: </div>
     <div>
-<!-- 
-    <a id="custom_url_<?php
-    echo $post->ID ?>" href="<?php
-    echo $url ?>"><?php
-    echo $url ?></a>
- -->
-    <input type="text" id="custom_url_<?php
+    <input class="custom_url" type="text" id="custom_url_<?php
     echo $post->ID ?>" value="<?php
     echo $url ?>" style="width: 100%; <?php if(!$checked) echo 'display: none;' ?>"></div>  
-    <button id="btn_copy_<?php
-    echo $post->ID ?>" style="<?php if(!$checked) echo 'display: none;' ?>" type="button" onclick="customFile.copyToClipboard('#custom_url_<?php echo $post->ID ?>'); return;">Copy</button> 
+    <button class="custom_url" style="<?php if(!$checked) echo 'display: none;' ?>" type="button" onclick="customFile.copyToClipboard('#custom_url_<?php echo $post->ID ?>'); return;">Copy</button> 
     <?php
 }
 

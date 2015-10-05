@@ -22,13 +22,13 @@
 		      } else {
 		      	var labelId = "#custom_url_" + data.post_id;
 		      	var btnCopyId = '#btn_copy_' + data.post_id;
+		      	var divCustomUrlId = '#custom_url_div_' + data.post_id;
+		      	var custom_url_class = '.custom_url';
 		      	if(data.is_prevented === "1"){
-		      		jQuery(labelId).show();
+		      		jQuery(custom_url_class).show();
 		      		jQuery(labelId).val(data.url);	
-		      		jQuery(btnCopyId).show();
 		      	} else {
-		      		jQuery(labelId).hide();
-		      		jQuery(btnCopyId).hide();
+		      		jQuery(custom_url_class).hide();
 		      	}
 		      }
 		    },
