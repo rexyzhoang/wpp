@@ -44,26 +44,51 @@ function media_custom_columns($column_name, $id) {
     $url = isset($advance_file) && $checked ? site_url() . '/private/' . $advance_file->url : '';
     if ($column_name != 'direct_access') return;
 ?>
-    <input id="ckb_<?php
-    echo $post->ID ?>" <?php
+     <input id="ckb_<?php
+    echo $post->ID
+?>" <?php
     if ($checked) echo 'checked="checked"'; ?> onclick="customFile.preventFile('<?php
-    echo $post->ID ?>')" type="checkbox"/><?php
+    echo $post->ID
+?>')" type="checkbox"/><?php
     _e('Prevent direct access'); ?>
-    <div class="custom_url" style="<?php if(!$checked) echo 'display: none;'?>">
-    <div>Access your file via this link:</div>
-    <div>
-    <input type="text" id="custom_url_<?php
-    echo $post->ID ?>" value="<?php
-    echo $url ?>" style="width: 100%"></div>  
-    <button id="btn_copy" type="button" onclick="customFile.copyToClipboard('#custom_url_<?php echo $post->ID ?>'); return;">Copy</button>
-    </div>
-    <?php
+     <div class="custom_url_<?php
+    echo $post->ID
+?>" style="<?php
+    if (!$checked) echo 'display: none;' ?>">
+     <div>Access your file via this link:</div>
+     <div>
+     <input type="text" id="custom_url_<?php
+    echo $post->ID
+?>" value="<?php
+    echo $url
+?>" style="width: 100%"></div>  
+     <button id="btn_copy" type="button" onclick="customFile.copyToClipboard('#custom_url_<?php
+    echo $post->ID ?>'); return;">Copy</button>
+     </div>
+ <?php
 }
 
 function so_wp_ajax_function() {
     $repository = new Repository;
     $post_id = $_POST['id'];
     $is_prevented = $_POST['is_prevented'];
+    if($is_prevented === '1') {
+        $limit = fa_get_file_limitation();
+        $number_of_records = $repository->check_advance_file_limitation();
+        if($number_of_records > $limit) {
+            $file_result = array('error' => "There are only 3 files prevented direct access in free version. Please upgrade Premium version.");
+        } else {
+            $file_result = prevent_direct_access($post_id, $is_prevented);
+        }
+    } else {
+        $file_result = prevent_direct_access($post_id, $is_prevented);
+    }
+    wp_send_json($file_result);
+    wp_die();
+}
+
+function prevent_direct_access($post_id, $is_prevented) {
+    $repository = new Repository;
     $file_info = array('time' => current_time('mysql'), 'post_id' => $post_id, 'is_prevented' => $is_prevented, 'url' => generate_unique_string());
     $result = $repository->create_advance_file($file_info);
     if ($result < 1 || $result === false) {
@@ -88,8 +113,7 @@ function so_wp_ajax_function() {
             fa_RemoveHtaccess($redirect_download_rule, $redirect_prevent_rule);
         }
     }
-    wp_send_json($file_result);
-    wp_die();
+    return $file_result;
 }
 
 /// FIX ME: Wrong function naming???
@@ -100,6 +124,7 @@ function WCM_Setup_Demo_on_uninstall() {
     // Important: Check if the file is the one
     // that was registered during the uninstall hook.
     if (__FILE__ != WP_UNINSTALL_PLUGIN) return;
+    
     // Uncomment the following line to see the function in action
     exit(var_dump($_GET));
 }

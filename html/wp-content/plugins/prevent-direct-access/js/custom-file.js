@@ -17,13 +17,14 @@
 		    },
 		    success: function( data ){
 		      //Do something with the result from server
-		      if(typeof data.error !== 'undefined' && data.error === true) {
-		      	alert(data.message);
+		      if(typeof data.error !== 'undefined') {
+		      	jQuery(checkBoxId).prop('checked', false);
+		      	alert(data.error);
 		      } else {
 		      	var labelId = "#custom_url_" + data.post_id;
 		      	var btnCopyId = '#btn_copy_' + data.post_id;
 		      	var divCustomUrlId = '#custom_url_div_' + data.post_id;
-		      	var custom_url_class = '.custom_url';
+		      	var custom_url_class = '.custom_url_' + data.post_id;
 		      	if(data.is_prevented === "1"){
 		      		jQuery(custom_url_class).show();
 		      		jQuery(labelId).val(data.url);	

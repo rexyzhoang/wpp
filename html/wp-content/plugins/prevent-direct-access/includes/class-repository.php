@@ -57,6 +57,12 @@ class Repository {
 	    $result = $this->wpdb->update($this->table_name, $data, $where);
 	    return $result;
 	}
+
+	function check_advance_file_limitation() {
+		$is_prevented = 1;
+		$number_of_records = $this->wpdb->get_var($this->wpdb->prepare("SELECT count(*) FROM $this->table_name WHERE is_prevented = %d", $is_prevented));
+		return $number_of_records;
+	}
 }
 
 ?>
