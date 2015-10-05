@@ -92,6 +92,7 @@ function so_wp_ajax_function() {
     wp_die();
 }
 
+/// FIX ME: Wrong function naming???
 function WCM_Setup_Demo_on_uninstall() {
     if (!current_user_can('activate_plugins')) return;
     check_admin_referer('bulk-plugins');
