@@ -20,8 +20,10 @@ add_filter("manage_upload_columns", 'upload_columns');
 add_action("manage_media_custom_column", 'media_custom_columns', 0, 2);
 add_action('admin_enqueue_scripts', 'admin_load_js');
 add_action('wp_ajax_myaction', 'so_wp_ajax_function');
+add_action('delete_post', 'delete_prevent_direct_access');
+
 register_activation_hook(__FILE__, 'jal_install');
-register_uninstall_hook(__FILE__, 'WCM_Setup_Demo_on_uninstall');
+register_uninstall_hook(__FILE__, 'wcm_setup_demo_on_uninstall');
 register_uninstall_hook(__FILE__, 'uninstall');
 add_filter('mod_rewrite_rules', 'fa_htaccess_contents');
 
@@ -116,8 +118,12 @@ function prevent_direct_access($post_id, $is_prevented) {
     return $file_result;
 }
 
-/// FIX ME: Wrong function naming???
-function WCM_Setup_Demo_on_uninstall() {
+function delete_prevent_direct_access($post_id) { 
+   $repository = new Repository;
+   $repository->delete_advance_file_by_post_id($post_id);
+}
+
+function wcm_setup_demo_on_uninstall() {
     if (!current_user_can('activate_plugins')) return;
     check_admin_referer('bulk-plugins');
     

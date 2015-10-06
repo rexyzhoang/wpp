@@ -51,6 +51,10 @@ class Repository {
 	    return $advance_file;
 	}
 
+	function delete_advance_file($id) {
+		$result = $this->wpdb->delete($this->table_name, array('ID' => $id), array('%d'));
+	}
+
 	function update_advance_file_by_post_id($file_info) {
 	    $data = array('is_prevented' => $file_info['is_prevented'],);
 	    $where = array('post_id' => $file_info['post_id']);
@@ -62,6 +66,13 @@ class Repository {
 		$is_prevented = 1;
 		$number_of_records = $this->wpdb->get_var($this->wpdb->prepare("SELECT count(*) FROM $this->table_name WHERE is_prevented = %d", $is_prevented));
 		return $number_of_records;
+	}
+
+	function delete_advance_file_by_post_id($post_id) {
+		$advance_file = $this->get_advance_file_by_post_id($post_id);
+		if(isset($advance_file) || $advance_file != null){
+			$this->delete_advance_file($advance_file->ID);
+		}
 	}
 }
 
