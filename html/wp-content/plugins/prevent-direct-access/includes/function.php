@@ -329,18 +329,10 @@ function fa_RemoveHtaccess($fa_first_rule, $fa_last_rule) {
     
     // remove matching prevent rules and EOL
     while (strpos($data, $fa_last_rule) !== false) {
-        $start_replace = strpos($data, $fa_last_rule);
-        $replace_length = strlen($fa_last_rule);
-        
-        //error_log('found new rule, removing..');
         $data = str_replace($fa_last_rule, '', $data);
         
-        while (substr($data, $start_replace - 1, 1) == PHP_EOL) {
-            $data = substr_replace($data, '', $start_replace - 1, 1);
-            
-            //error_log('after remove rule: ', $data);
-            
-        }
+        // remove blank lines
+        $data= preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $data);
     }
     
     $fa_write_success = file_put_contents($htaccess_file, $data);
