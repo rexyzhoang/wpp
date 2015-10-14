@@ -16,6 +16,7 @@ include 'includes/helper.php';
 include 'includes/db-init.php';
 require_once dirname(__FILE__) . '/includes/function.php';
 
+add_action('init', 'my_init');
 add_filter("manage_upload_columns", 'upload_columns');
 add_action("manage_media_custom_column", 'media_custom_columns', 0, 2);
 add_action('admin_enqueue_scripts', 'admin_load_js');
@@ -27,8 +28,27 @@ register_uninstall_hook(__FILE__, 'wcm_setup_demo_on_uninstall');
 register_uninstall_hook(__FILE__, 'uninstall');
 add_filter('mod_rewrite_rules', 'fa_htaccess_contents');
 
+function my_init() {
+    if (isset($_GET['file']) && '' != $_GET['file']) {
+        error_log('[DebugPreventDirectAccess]' . $url);
+    }
+    
+    // $url = $_SERVER['REQUEST_URI'];
+    // error_log('[DebugPreventDirectAccess]' . $url);
+    
+}
+
 function fa_htaccess_contents($rules) {
-    return $rules . "Options -Indexes" . PHP_EOL;
+    $my_content = <<<EOD
+\n # BEGIN My Added Content
+# Protect wpconfig.php
+<Files wp-config.php>
+    Order Allow,Deny
+    Deny from all
+</Files>
+# END My Added Content\n
+EOD;
+    return $my_content . $rules;
 }
 
 function upload_columns($columns) {
@@ -65,7 +85,8 @@ function media_custom_columns($column_name, $id) {
     echo $url
 ?>" style="width: 100%"></div>  
      <button id="btn_copy" type="button" onclick="customFile.copyToClipboard('#custom_url_<?php
-    echo $post->ID ?>'); return;">Copy</button>
+    echo $post->ID
+?>'); return;">Copy</button>
      </div>
  <?php
 }
@@ -74,15 +95,17 @@ function so_wp_ajax_function() {
     $repository = new Repository;
     $post_id = $_POST['id'];
     $is_prevented = $_POST['is_prevented'];
-    if($is_prevented === '1') {
+    if ($is_prevented === '1') {
         $limit = fa_get_file_limitation();
         $number_of_records = $repository->check_advance_file_limitation();
-        if($number_of_records > $limit) {
+        if ($number_of_records > $limit) {
             $file_result = array('error' => "There are only 3 files prevented direct access in free version. Please upgrade Premium version.");
-        } else {
+        } 
+        else {
             $file_result = prevent_direct_access($post_id, $is_prevented);
         }
-    } else {
+    } 
+    else {
         $file_result = prevent_direct_access($post_id, $is_prevented);
     }
     wp_send_json($file_result);
@@ -118,9 +141,9 @@ function prevent_direct_access($post_id, $is_prevented) {
     return $file_result;
 }
 
-function delete_prevent_direct_access($post_id) { 
-   $repository = new Repository;
-   $repository->delete_advance_file_by_post_id($post_id);
+function delete_prevent_direct_access($post_id) {
+    $repository = new Repository;
+    $repository->delete_advance_file_by_post_id($post_id);
 }
 
 function wcm_setup_demo_on_uninstall() {

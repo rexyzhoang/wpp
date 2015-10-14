@@ -4,6 +4,6 @@ function generate_unique_string() {
 }
 
 function fa_get_file_limitation() {
-    return 3;
+    return 2;
 }
 ?>
