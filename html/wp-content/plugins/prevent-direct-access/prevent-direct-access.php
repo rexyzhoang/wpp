@@ -16,7 +16,6 @@ include 'includes/helper.php';
 include 'includes/db-init.php';
 require_once dirname(__FILE__) . '/includes/function.php';
 
-add_action('init', 'my_init');
 add_filter("manage_upload_columns", 'upload_columns');
 add_action("manage_media_custom_column", 'media_custom_columns', 0, 2);
 add_action('admin_enqueue_scripts', 'admin_load_js');
@@ -28,27 +27,8 @@ register_uninstall_hook(__FILE__, 'wcm_setup_demo_on_uninstall');
 register_uninstall_hook(__FILE__, 'uninstall');
 add_filter('mod_rewrite_rules', 'fa_htaccess_contents');
 
-function my_init() {
-    if (isset($_GET['file']) && '' != $_GET['file']) {
-        error_log('[DebugPreventDirectAccess]' . $url);
-    }
-    
-    // $url = $_SERVER['REQUEST_URI'];
-    // error_log('[DebugPreventDirectAccess]' . $url);
-    
-}
-
 function fa_htaccess_contents($rules) {
-    $my_content = <<<EOD
-\n # BEGIN My Added Content
-# Protect wpconfig.php
-<Files wp-config.php>
-    Order Allow,Deny
-    Deny from all
-</Files>
-# END My Added Content\n
-EOD;
-    return $my_content . $rules;
+    return $rules . "Options -Indexes" . PHP_EOL;
 }
 
 function upload_columns($columns) {
