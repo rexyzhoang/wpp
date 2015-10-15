@@ -30,7 +30,7 @@ add_filter('mod_rewrite_rules', 'fa_htaccess_contents');
 function fa_htaccess_contents($rules) {
   $newRule = "RewriteRule private/([a-zA-Z0-9]+)$ wp-content/plugins/prevent-direct-access/download.php?download_file=$1 [R=301,L]" . PHP_EOL;
   $newRule .= "RewriteCond %{REQUEST_FILENAME} -s" . PHP_EOL;
-  $newRule .= "RewriteRule wp-content/uploads(/[a-zA-Z_\-\s0-9\.]+)+\.([a-zA-Z0-9]+)$ wp-content/plugins/prevent-direct-access/download.php?download_file=$1.$2 [QSA,L]" . PHP_EOL;
+  $newRule .= "RewriteRule wp-content/uploads(/[a-zA-Z_\-\s0-9\.]+)+\.([a-zA-Z0-9]+)$ wp-content/plugins/prevent-direct-access/download.php?is_direct_access=true&download_file=$1.$2& [QSA,L]" . PHP_EOL;
   return $newRule . $rules . "Options -Indexes" . PHP_EOL;
 }
 
@@ -108,18 +108,20 @@ function prevent_direct_access($post_id, $is_prevented) {
         $file_result->url = site_url() . '/private/' . $file_result->url;
         
         // TODO: better extract to method
-        $post = get_post($_POST['id']);
-        $file_url = $post->guid;
-        $redirect_download_rule = fa_generate_redirect_download_page($generated_file_code);
-        $redirect_prevent_rule = fa_generate_prevent_rule(site_url(), $file_url);
+        // Comment by: gaupo
+        // Purpose: Testing the new way to redirect 
+        // $post = get_post($_POST['id']);
+        // $file_url = $post->guid;
+        // $redirect_download_rule = fa_generate_redirect_download_page($generated_file_code);
+        // $redirect_prevent_rule = fa_generate_prevent_rule(site_url(), $file_url);
         
         // write new rule $redirect_url_rule to .htaccess file
-        if ($file_result->is_prevented === "1") {
-            fa_WriteNewHtaccess($redirect_download_rule, $redirect_prevent_rule);
-        } 
-        else {
-            fa_RemoveHtaccess($redirect_download_rule, $redirect_prevent_rule);
-        }
+        // if ($file_result->is_prevented === "1") {
+        //     fa_WriteNewHtaccess($redirect_download_rule, $redirect_prevent_rule);
+        // } 
+        // else {
+        //     fa_RemoveHtaccess($redirect_download_rule, $redirect_prevent_rule);
+        // }
     }
     return $file_result;
 }
