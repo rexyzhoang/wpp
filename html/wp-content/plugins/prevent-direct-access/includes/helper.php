@@ -1,9 +1,9 @@
 <?php
 function generate_unique_string() {
-    return uniqid();
+	return uniqid();
 }
 
 function fa_get_file_limitation() {
-    return 2;
+	return 2;
 }
 ?>
