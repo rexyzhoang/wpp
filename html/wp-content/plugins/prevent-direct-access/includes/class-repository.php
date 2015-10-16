@@ -41,16 +41,13 @@ class Repository {
 
 	function get_post_by_guid( $guid ) {
 		$guid = '%' . $guid;
-		$table_name = $this->table_name;
-		//select * from wp_posts where post_type="attachment" and guid LIKE "%/wp-content/uploads/2015/10/empty1.png
-		$queryString = "SELECT * FROM wp_posts WHERE post_type='attachment' AND guid LIKE %s";
+		$queryString = "SELECT * FROM $table_name WHERE post_type='attachment' AND guid LIKE %s";
 		$preparation = $this->wpdb->prepare( $queryString, $guid, ARRAY_A );
 		$post = $this->wpdb->get_row( $preparation );
 		return $post;
 	}
 
 	function get_advance_file_by_post_id( $post_id ) {
-		$table_name = $this->table_name;
 		$queryString = "SELECT * FROM $this->table_name WHERE post_id = $post_id";
 		$advance_file = $this->wpdb->get_row( $queryString );
 		return $advance_file;
