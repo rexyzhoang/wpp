@@ -3,7 +3,6 @@ global $jal_db_version;
 $jal_db_version = '1.0';
 
 function jal_install() {
-	pda_validate_activation();
 	flush_rewrite_rules();
 
 	global $wpdb;
@@ -29,16 +28,6 @@ function jal_install() {
 		dbDelta( $sql );
 
 		add_option( 'jal_db_version', $jal_db_version );
-	}
-}
-
-function pda_validate_activation() {
-	$activation_failed_messages = fa_htaccess_writable();
-	error_log( $activation_failed_messages, 0 );
-
-	if ( $activation_failed_messages !== true ) {
-		deactivate_plugins( basename( __FILE__ ) );
-		wp_die( '<p>The <strong>' . $activation_failed_messages . '</strong></p>', 'Plugin Activation Error',  array( 'response'=>200, 'back_link'=>TRUE ) );
 	}
 }
 
