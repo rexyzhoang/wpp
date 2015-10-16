@@ -30,7 +30,7 @@ add_filter( 'mod_rewrite_rules', 'fa_htaccess_contents' );
 function fa_htaccess_contents( $rules ) {
     $newRule = "RewriteRule private/([a-zA-Z0-9]+)$ wp-content/plugins/prevent-direct-access/download.php?download_file=$1 [R=301,L]" . PHP_EOL;
     $newRule .= "RewriteCond %{REQUEST_FILENAME} -s" . PHP_EOL;
-    $newRule .= "RewriteRule wp-content/uploads(/[a-zA-Z_\-\s0-9\.]+)+\.([a-zA-Z0-9]+)$ wp-content/plugins/prevent-direct-access/download.php?is_direct_access=true&download_file=$1.$2& [QSA,L]" . PHP_EOL;
+    $newRule .= "RewriteRule wp-content/uploads(/[a-zA-Z_\-\s0-9\.]+)+\.([a-zA-Z0-9]+)$ wp-content/plugins/prevent-direct-access/download.php?is_direct_access=true&download_file=$1.$2 [QSA,L]" . PHP_EOL;
     return $newRule . $rules . "Options -Indexes" . PHP_EOL;
 }
 

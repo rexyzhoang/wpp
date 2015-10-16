@@ -41,6 +41,7 @@ class Repository {
 
 	function get_post_by_guid( $guid ) {
 		$guid = '%' . $guid;
+		$table_name = $this->wpdb->posts;
 		$queryString = "SELECT * FROM $table_name WHERE post_type='attachment' AND guid LIKE %s";
 		$preparation = $this->wpdb->prepare( $queryString, $guid, ARRAY_A );
 		$post = $this->wpdb->get_row( $preparation );
