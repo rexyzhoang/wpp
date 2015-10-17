@@ -48,6 +48,14 @@ class Repository {
 		return $post;
 	}
 
+	function get_file_by_name( $name ) {
+		$table_name = $this->wpdb->posts;
+		$queryString = "SELECT * FROM $table_name WHERE post_type='attachment' AND post_name LIKE %s";
+		$preparation = $this->wpdb->prepare( $queryString, $name, ARRAY_A );
+		$post = $this->wpdb->get_row( $preparation );
+		return $post;
+	}
+
 	function get_advance_file_by_post_id( $post_id ) {
 		$queryString = "SELECT * FROM $this->table_name WHERE post_id = $post_id";
 		$advance_file = $this->wpdb->get_row( $queryString );

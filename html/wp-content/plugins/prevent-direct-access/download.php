@@ -15,31 +15,45 @@ if ( $is_direct_access === 'true' ) {
 
 
 function check_file_is_prevented() {
-    ///this is post's guid /wp-content/uploads/yyyy/mm/namexxx-at-hh.mm.ss.png
+    
+    $file_name = $_GET['download_file'];
     $guid = $_SERVER['REQUEST_URI'];
+    $file_type = $_GET['file_type'];
+    $guid = preg_replace("/-\d+x\d+.$file_type$/", ".$file_type", $guid);
+    $file_name = preg_replace('{^/|\?.*}', '', $file_name);
+
     $repository = new Repository;
     $post = $repository->get_post_by_guid( $guid );
     if ( isset( $post ) ) {
+        error_log("[download.25]PostId: " . $post->ID);
         $advance_file = $repository->get_advance_file_by_post_id( $post->ID );
         //check whether the file is prevented
         if ( isset( $advance_file ) && $advance_file->is_prevented === "1" ) {
             status_header( 404 );
-            die( '404 &#8212; File not found.' );
+            die( '404 &#8212; File not found (line31).' );
+        } else {
+            $post_date = $post->post_date;
+            $month = date("m", strtotime($post_date)); //10
+            $year = date("Y", strtotime($post_date));  //2015
+            $path_to_upload = wp_upload_dir();
+            $base_dir = $path_to_upload['basedir'];
+            $file = $base_dir . '/' . $year . '/' . $month . '/' . $file_name . '.' . $file_type;
+            error_log("[download.25]file: " . $file);
+            send_file_to_client( $file );
         }
+    } else {
+        status_header( 404 );
+        die( '404 &#8212; File not found (line41).' );
     }
-    //replace the first '/' by wordpress root path
-    //Eg: from /wp-content/uploads/yyyy/mm/namexxx-at-hh.mm.ss.png
-    //    to   /var/www/html/wp-content/uploads/yyyy/mm/namexxx-at-hh.mm.ss.png
-    $file = preg_replace( '{^/|\?.*}', ABSPATH, $guid );
-    send_file_to_client( $file );
 }
 
 function send_file_to_client( $file ) {
     if ( !is_file( $file ) ) {
         status_header( 404 );
-        die( '404 &#8212; File not found.' );
+        die( '404 &#8212; File not found (line49)' );
     }
     $mime = wp_check_filetype( $file );
+
     if ( false === $mime[ 'type' ] && function_exists( 'mime_content_type' ) ) {
         $mime[ 'type' ] = mime_content_type( $file );
     }
@@ -55,6 +69,7 @@ function send_file_to_client( $file ) {
     if ( false === strpos( $_SERVER['SERVER_SOFTWARE'], 'Microsoft-IIS' ) ) {
         header( 'Content-Length: ' . filesize( $file ) );
     }
+
     $last_modified = gmdate( 'D, d M Y H:i:s', filemtime( $file ) );
     $etag = '"' . md5( $last_modified ) . '"';
     header( "Last-Modified: $last_modified GMT" );
@@ -69,6 +84,7 @@ function send_file_to_client( $file ) {
     $client_modified_timestamp = $client_last_modified ? strtotime( $client_last_modified ) : 0;
     // Make a timestamp for our most recent modification...
     $modified_timestamp = strtotime( $last_modified );
+
     if ( ( $client_last_modified && $client_etag )
         ? ( ( $client_modified_timestamp >= $modified_timestamp ) && ( $client_etag == $etag ) )
         : ( ( $client_modified_timestamp >= $modified_timestamp ) || ( $client_etag == $etag ) )
@@ -76,6 +92,7 @@ function send_file_to_client( $file ) {
         status_header( 304 );
         exit;
     }
+    
     readfile( $file );
 }
 
