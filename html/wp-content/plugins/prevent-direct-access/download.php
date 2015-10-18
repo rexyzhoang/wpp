@@ -20,6 +20,7 @@ function check_file_is_prevented() {
     $guid = $_SERVER['REQUEST_URI'];
     $file_type = $_GET['file_type'];
     $guid = preg_replace("/-\d+x\d+.$file_type$/", ".$file_type", $guid);
+    error_log("[download.23]guid: " . $guid);
     $file_name = preg_replace('{^/|\?.*}', '', $file_name);
 
     $repository = new Repository;
