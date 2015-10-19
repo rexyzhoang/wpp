@@ -21,11 +21,33 @@ add_action( "manage_media_custom_column", 'media_custom_columns', 0, 2 );
 add_action( 'admin_enqueue_scripts', 'admin_load_js' );
 add_action( 'wp_ajax_myaction', 'so_wp_ajax_function' );
 add_action( 'delete_post', 'delete_prevent_direct_access' );
+add_action('admin_notices', 'pda_admin_notices');
 
 register_activation_hook( __FILE__, 'jal_install' );
 register_uninstall_hook( __FILE__, 'wcm_setup_demo_on_uninstall' );
 register_uninstall_hook( __FILE__, 'uninstall' );
 add_filter( 'mod_rewrite_rules', 'fa_htaccess_contents' );
+
+function pda_admin_notices() {
+    global $pagenow;
+
+    if ( $pagenow == 'plugins.php' ) {
+        $activation_failed_messages = fa_htaccess_writable();
+        error_log( $activation_failed_messages, 0 );
+
+        $plugin = plugin_basename(__FILE__);
+        if ( $activation_failed_messages !== true && is_plugin_active($plugin)) {
+            // deactivate_plugins( basename( __FILE__ ) );
+            
+            ?>
+            <div class="error is-dismissible notice">
+              <p><b><?php echo "Prevent Direct Access: "; ?></b>  <?php echo $activation_failed_messages; ?></p>
+            </div>
+            <?php
+        }   
+    }
+
+}
 
 function fa_htaccess_contents( $rules ) {
     $newRule = "RewriteRule private/([a-zA-Z0-9]+)$ wp-content/plugins/prevent-direct-access/download.php?download_file=$1 [R=301,L]" . PHP_EOL;
