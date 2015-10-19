@@ -88,7 +88,7 @@ function media_custom_columns( $column_name, $id ) {
         echo $post->ID
         ?>" value="<?php
         echo $url
-        ?>" style="width: 100%"></div>
+        ?>" style="width: 80%"></div>
      <button id="btn_copy" type="button" onclick="customFile.copyToClipboard('#custom_url_<?php
         echo $post->ID
         ?>'); return;">Copy</button>
