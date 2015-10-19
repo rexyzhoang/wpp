@@ -11,7 +11,7 @@ License: GPL
 */
 if ( !defined( 'ABSPATH' ) ) exit;
 include 'includes/class-repository.php';
-include 'includes/java-script-loader.php';
+include 'includes/javascript-loader.php';
 include 'includes/helper.php';
 include 'includes/db-init.php';
 require_once dirname( __FILE__ ) . '/includes/function.php';
@@ -104,7 +104,7 @@ function so_wp_ajax_function() {
         $limit = fa_get_file_limitation();
         $number_of_records = $repository->check_advance_file_limitation();
         if ( $number_of_records > $limit ) {
-            $file_result = array( 'error' => "There are only 3 files prevented direct access in free version. Please upgrade Premium version." );
+            $file_result = array( 'error' => "You can only protect 3 files & photos on the free version. Please contact us for the premium version." );
         }
         else {
             $file_result = prevent_direct_access( $post_id, $is_prevented );
@@ -128,22 +128,6 @@ function prevent_direct_access( $post_id, $is_prevented ) {
         $file_result = $repository->get_advance_file_by_post_id( $file_info['post_id'] );
         $generated_file_code = $file_result->url;
         $file_result->url = site_url() . '/private/' . $file_result->url;
-
-        // TODO: better extract to method
-        // Comment by: gaupo
-        // Purpose: Testing the new way to redirect
-        // $post = get_post($_POST['id']);
-        // $file_url = $post->guid;
-        // $redirect_download_rule = fa_generate_redirect_download_page($generated_file_code);
-        // $redirect_prevent_rule = fa_generate_prevent_rule(site_url(), $file_url);
-
-        // write new rule $redirect_url_rule to .htaccess file
-        // if ($file_result->is_prevented === "1") {
-        //     fa_WriteNewHtaccess($redirect_download_rule, $redirect_prevent_rule);
-        // }
-        // else {
-        //     fa_RemoveHtaccess($redirect_download_rule, $redirect_prevent_rule);
-        // }
     }
     return $file_result;
 }
