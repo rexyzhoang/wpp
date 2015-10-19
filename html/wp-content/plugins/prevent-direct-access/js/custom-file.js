@@ -26,10 +26,10 @@
 		      	var divCustomUrlId = '#custom_url_div_' + data.post_id;
 		      	var custom_url_class = '.custom_url_' + data.post_id;
 		      	if(data.is_prevented === "1"){
-		      		jQuery(custom_url_class).show();
+		      		jQuery(custom_url_class).fadeIn();
 		      		jQuery(labelId).val(data.url);	
 		      	} else {
-		      		jQuery(custom_url_class).hide();
+		      		jQuery(custom_url_class).fadeOut();
 		      	}
 		      }
 		    },
