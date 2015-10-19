@@ -24,6 +24,7 @@ add_action( 'delete_post', 'delete_prevent_direct_access' );
 add_action('admin_notices', 'pda_admin_notices');
 
 register_activation_hook( __FILE__, 'jal_install' );
+register_deactivation_hook( __FILE__, 'deactivate' );
 register_uninstall_hook( __FILE__, 'wcm_setup_demo_on_uninstall' );
 register_uninstall_hook( __FILE__, 'uninstall' );
 add_filter( 'mod_rewrite_rules', 'fa_htaccess_contents' );
@@ -46,7 +47,6 @@ function pda_admin_notices() {
             <?php
         }   
     }
-
 }
 
 function fa_htaccess_contents( $rules ) {
@@ -165,6 +165,10 @@ function wcm_setup_demo_on_uninstall() {
     exit( var_dump( $_GET ) );
 }
 
+function deactivate() {
+    remove_action( 'mod_rewrite_rules', 'fa_htaccess_contents' );
+    $GLOBALS['wp_rewrite']->flush_rules();
+}
 function uninstall() {
     global $wpdb;
     $table_name = $wpdb->prefix . 'advancefiles';
