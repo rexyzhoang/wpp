@@ -42,12 +42,17 @@
 
 	window.customFile = customFile;
 		
-	function _copyToClipboard(element) {
+	function _copyToClipboard(btn, txt_input) {
   		var $temp = jQuery("<input>");
   		jQuery("body").append($temp);
-  		$temp.val(jQuery(element).val()).select();
+  		$temp.val(jQuery(txt_input).val()).select();
   		document.execCommand("copy");
   		$temp.remove();
+
+  		jQuery(btn).text("URL Copied");
+		setTimeout(function() {
+		 	jQuery(btn).text("Copy URL");
+		}, 5000);
 	}
 	
 })(window);
