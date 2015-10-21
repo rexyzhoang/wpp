@@ -32,7 +32,7 @@ add_filter( 'mod_rewrite_rules', 'fa_htaccess_contents' );
 function pda_admin_notices() {
     global $pagenow;
 
-    if ( $pagenow == 'plugins.php' ) {
+    if ( $pagenow == 'plugins.php' || $pagenow == 'upload.php') {
         $activation_failed_messages = fa_htaccess_writable();
         error_log( $activation_failed_messages, 0 );
 
@@ -42,11 +42,12 @@ function pda_admin_notices() {
             
             ?>
             <div class="error is-dismissible notice">
-              <p><b><?php echo "Prevent Direct Access: "; ?></b>  <?php echo $activation_failed_messages; ?></p>
+              <p><b><?php echo "Prevent Direct Access: "; ?></b> If your <b>.htaccess</b> file were writable, we could do this automatically, but it isn’t. So please make it writable or alternatively, you can manually update your .htaccess with the mod_rewrite rules found under <b>Settings >> Permanlinks</b>. Until then, the plugin can't work yet. </p>
             </div>
             <?php
         }   
     }
+
 }
 
 function fa_htaccess_contents( $rules ) {
@@ -89,7 +90,7 @@ function media_custom_columns( $column_name, $id ) {
         ?>" value="<?php
         echo $url
         ?>" style="width: 80%"></div>
-     <button id="btn_copy" type="button" onclick="customFile.copyToClipboard('#custom_url_<?php
+     <button id="btn_copy" type="button" onclick="customFile.copyToClipboard(this, '#custom_url_<?php
         echo $post->ID
         ?>'); return;">Copy URL</button>
      </div>
