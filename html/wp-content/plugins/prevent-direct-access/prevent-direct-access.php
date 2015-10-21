@@ -3,7 +3,7 @@
 /*
 Plugin Name: Prevent Direct Access
 Plugin URI: https://github.com/gaupoit/wpp
-Description: A hello world plugin used to demonstrate the process of creating plugins.
+Description: A simple way to prevent search engines and the public from indexing and accessing your file without user authentication.
 Version: 1.0
 Author: HTH
 Author URI: https://github.com/gaupoit/wpp

@@ -6,4 +6,8 @@ function generate_unique_string() {
 function fa_get_file_limitation() {
 	return 2;
 }
+
+function fa_get_plugin_configs() {
+	
+}
 ?>

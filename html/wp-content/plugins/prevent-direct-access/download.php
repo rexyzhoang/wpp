@@ -31,7 +31,7 @@ function check_file_is_prevented() {
         //check whether the file is prevented
         if ( isset( $advance_file ) && $advance_file->is_prevented === "1" ) {
             status_header( 404 );
-            die( '404 &#8212; File not found (line31).' );
+            die( '404 &#8212; File not found.' );
         } else {
             $post_date = $post->post_date;
             $month = date("m", strtotime($post_date)); //10
@@ -44,14 +44,14 @@ function check_file_is_prevented() {
         }
     } else {
         status_header( 404 );
-        die( '404 &#8212; File not found (line41).' );
+        die( '404 &#8212; File not found.' );
     }
 }
 
 function send_file_to_client( $file ) {
     if ( !is_file( $file ) ) {
         status_header( 404 );
-        die( '404 &#8212; File not found (line49)' );
+        die( '404 &#8212; File not found.' );
     }
     $mime = wp_check_filetype( $file );
 
