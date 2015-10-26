@@ -156,7 +156,7 @@ function deactivate() {
 }
 function uninstall() {
     global $wpdb;
-    $table_name = $wpdb->prefix . 'advancefiles';
+    $table_name = $wpdb->prefix . 'prevent_direct_access';
     $wpdb->query( "DROP TABLE IF EXISTS $table_name" );
 }
 ?>

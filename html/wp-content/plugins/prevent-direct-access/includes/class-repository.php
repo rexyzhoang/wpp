@@ -7,7 +7,7 @@ class Repository {
 	public function __construct() {
 		global $wpdb;
 		$this->wpdb = &$wpdb;
-		$this->table_name = $wpdb->prefix . 'advancefiles';
+		$this->table_name = $wpdb->prefix . 'prevent_direct_access';
 	}
 
 	function create_advance_file( $file_info ) {
