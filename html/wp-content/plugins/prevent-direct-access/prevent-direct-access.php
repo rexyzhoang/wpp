@@ -104,7 +104,7 @@ function so_wp_ajax_function() {
     if ( $is_prevented === '1' ) {
         $limit = fa_get_file_limitation();
         $number_of_records = $repository->check_advance_file_limitation();
-        if ( $number_of_records > $limit ) {
+        if ( $number_of_records >= $limit ) {
             $file_result = array( 'error' => "You can only protect 3 files & photos on the free version. Please contact us for the premium version." );
         }
         else {
