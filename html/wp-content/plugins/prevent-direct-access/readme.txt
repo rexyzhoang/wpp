@@ -67,4 +67,5 @@ The free version of this plugin offers protection to 3 files only. Contact us at
 * Track private URL hits
 * Allow changing private URL
 
-
+== Upgrade Notice ==
+N/A
