@@ -51,9 +51,16 @@ function pda_admin_notices() {
 }
 
 function fa_htaccess_contents( $rules ) {
-    $newRule = "RewriteRule private/([a-zA-Z0-9]+)$ wp-content/plugins/prevent-direct-access/download.php?download_file=$1 [R=301,L]" . PHP_EOL;
+    // eg. wp-content/plugins/prevent-direct-access/download.php?download_file=$1 [R=301,L]
+    $downloadFileRedirect = str_replace(trailingslashit(site_url()), '', plugins_url('download.php', __FILE__)) . "?download_file=$1 [R=301,L]" . PHP_EOL;
+    $newRule .= "RewriteRule private/([a-zA-Z0-9]+)$ " . $downloadFileRedirect;
     $newRule .= "RewriteCond %{REQUEST_FILENAME} -s" . PHP_EOL;
-    $newRule .= "RewriteRule ^wp-content/uploads(/[a-zA-Z_\-\s0-9\.]+)+\.([a-zA-Z0-9]+)$ wp-content/plugins/prevent-direct-access/download.php?is_direct_access=true&download_file=$1&file_type=$2 [QSA,L]" . PHP_EOL;
+
+    $directAccessPath = str_replace(trailingslashit(site_url()), '', plugins_url('download.php', __FILE__)) . "?is_direct_access=true&download_file=$1&file_type=$2 [QSA,L]" . PHP_EOL;
+
+    // eg. RewriteRule wp-content/uploads(/[a-zA-Z_\-\s0-9\.]+)+\.([a-zA-Z0-9]+)$ wp-content/plugins/prevent-direct-access/download.php?is_direct_access=true&download_file=$1&file_type=$2 [QSA,L]
+    $newRule .= "RewriteRule " . str_replace(trailingslashit(site_url()), '', wp_upload_dir()['baseurl']) . "(/[a-zA-Z_\-\s0-9\.]+)+\.([a-zA-Z0-9]+)$ " . $directAccessPath;
+
     return $newRule . $rules . "Options -Indexes" . PHP_EOL;
 }
 
