@@ -16,26 +16,40 @@ include 'includes/helper.php';
 
 require_once dirname( __FILE__ ) . '/includes/function.php';
 
-
-
 class Pda_Admin {
 
     private $pda_function;
 
     function __construct() {
         $pda_function = new Pda_Function();
-
         add_filter( 'manage_upload_columns', array($this, 'add_upload_columns') );
         add_action( 'manage_media_custom_column', array($this, 'media_custom_columns'), 0, 2 );
         add_action( 'admin_enqueue_scripts', array('Pda_JS_Loader', 'admin_load_js') );
         add_action( 'wp_ajax_myaction', array($this, 'so_wp_ajax_function' ) );
         add_action( 'delete_post', array($this, 'delete_prevent_direct_access' ) );
         add_action( 'admin_notices', array($this, 'admin_notices') );
+        add_action( 'init', array($this, 'my_endpoint') );
+        add_action( 'parse_query', array($this, 'parse_query') );
 
         register_activation_hook( __FILE__, array($this, 'plugin_install') );
         register_deactivation_hook( __FILE__, array($this, 'deactivate') );
         register_uninstall_hook( __FILE__, array($this, 'plugin_uninstall') );
         add_filter( 'mod_rewrite_rules', array($this, 'htaccess_contents') );
+    }
+
+    private function my_endpoint(){
+        $configs = Pda_Helper::get_plugin_configs();
+        $endpoint = $configs['endpoint'];
+        add_rewrite_endpoint( $endpoint, EP_ROOT );
+    }
+
+    private function parse_query( $query ){
+        $configs = Pda_Helper::get_plugin_configs();
+        $endpoint = $configs['endpoint'];
+        if( isset( $query->query_vars[$endpoint] ) ){
+            include( plugin_dir_path( __FILE__ ) . '/download.php');
+            exit;
+        }
     }
 
     private function admin_notices() {
@@ -60,14 +74,17 @@ class Pda_Admin {
     }
 
     private function htaccess_contents( $rules ) {
-        // eg. wp-content/plugins/prevent-direct-access/download.php?download_file=$1 [R=301,L]
-        $downloadFileRedirect = str_replace(trailingslashit(site_url()), '', plugins_url('download.php', __FILE__)) . "?download_file=$1 [R=301,L]" . PHP_EOL;
+        // eg. index.php?pre_dir_acc_61co625547=$1 [R=301,L]
+        $configs = Pda_Helper::get_plugin_configs();
+        $endpoint = $configs['endpoint'];
+        $downloadFileRedirect = str_replace(trailingslashit(site_url()), '', 'index.php') . "?{$endpoint}=$1 [R=301,L]" . PHP_EOL;
+
         $newRule = "RewriteRule private/([a-zA-Z0-9]+)$ " . $downloadFileRedirect;
         $newRule .= "RewriteCond %{REQUEST_FILENAME} -s" . PHP_EOL;
 
-        $directAccessPath = str_replace(trailingslashit(site_url()), '', plugins_url('download.php', __FILE__)) . "?is_direct_access=true&download_file=$1&file_type=$2 [QSA,L]" . PHP_EOL;
+        $directAccessPath = str_replace(trailingslashit(site_url()), '', 'index.php') . "?{$endpoint}=$1&is_direct_access=true&file_type=$2 [QSA,L]" . PHP_EOL;
 
-        // eg. RewriteRule wp-content/uploads(/[a-zA-Z_\-\s0-9\.]+)+\.([a-zA-Z0-9]+)$ wp-content/plugins/prevent-direct-access/download.php?is_direct_access=true&download_file=$1&file_type=$2 [QSA,L]
+        // eg. RewriteRule wp-content/uploads(/[a-zA-Z_\-\s0-9\.]+)+\.([a-zA-Z0-9]+)$ index.php?pre_dir_acc_61co625547=$1&is_direct_access=true&file_type=$2 [QSA,L]
         $newRule .= "RewriteRule " . str_replace(trailingslashit(site_url()), '', wp_upload_dir()['baseurl']) . "(/[a-zA-Z_\-\s0-9\.]+)+\.([a-zA-Z0-9]+)$ " . $directAccessPath;
 
         return $newRule . $rules . "Options -Indexes" . PHP_EOL;
@@ -113,7 +130,7 @@ class Pda_Admin {
      <?php
     }
 
-    function so_wp_ajax_function() {
+    private function so_wp_ajax_function() {
         $repository = new Repository;
         $post_id = $_POST['id'];
         $is_prevented = $_POST['is_prevented'];
@@ -154,7 +171,7 @@ class Pda_Admin {
         $repository->delete_advance_file_by_post_id( $post_id );
     }
 
-    function deactivate() {
+    private function deactivate() {
         remove_action( 'mod_rewrite_rules', array($pda_function, 'htaccess_contents') );
         $GLOBALS['wp_rewrite']->flush_rules();
     }
@@ -165,7 +182,7 @@ class Pda_Admin {
         $db->install();
     }
 
-    function plugin_uninstall() {
+    private function plugin_uninstall() {
         include dirname(__FILE__) . '/includes/db-init.php';
         $db = new Pda_Database();
         $db->uninstall();

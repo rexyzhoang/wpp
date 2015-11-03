@@ -11,8 +11,7 @@ class Pda_Helper {
 	}
 
 	public static function get_plugin_configs() {
-		
+		return array('endpoint' => 'pre_dir_acc_61co625547');
 	}
 
-}
 ?>
