@@ -10,160 +10,169 @@ Author URI: https://github.com/gaupoit/wpp
 License: GPL
 */
 if ( !defined( 'ABSPATH' ) ) exit;
-include 'includes/class-repository.php';
-include 'includes/javascript-loader.php';
+include 'includes/repository.php';
+include 'includes/js-loader.php';
 include 'includes/helper.php';
-include 'includes/db-init.php';
+
 require_once dirname( __FILE__ ) . '/includes/function.php';
 
-add_filter( "manage_upload_columns", 'upload_columns' );
-add_action( "manage_media_custom_column", 'media_custom_columns', 0, 2 );
-add_action( 'admin_enqueue_scripts', 'admin_load_js' );
-add_action( 'wp_ajax_myaction', 'so_wp_ajax_function' );
-add_action( 'delete_post', 'delete_prevent_direct_access' );
-add_action('admin_notices', 'pda_admin_notices');
 
-register_activation_hook( __FILE__, 'jal_install' );
-register_deactivation_hook( __FILE__, 'deactivate' );
-register_uninstall_hook( __FILE__, 'wcm_setup_demo_on_uninstall' );
-register_uninstall_hook( __FILE__, 'uninstall' );
-add_filter( 'mod_rewrite_rules', 'fa_htaccess_contents' );
 
-function pda_admin_notices() {
-    global $pagenow;
+class Pda_Admin {
 
-    if ( $pagenow == 'plugins.php' || $pagenow == 'upload.php') {
-        $activation_failed_messages = fa_htaccess_writable();
-        error_log( $activation_failed_messages, 0 );
+    private $pda_function;
 
-        $plugin = plugin_basename(__FILE__);
-        if ( $activation_failed_messages !== true && is_plugin_active($plugin)) {
-            // deactivate_plugins( basename( __FILE__ ) );
-            
-            ?>
-            <div class="error is-dismissible notice">
-              <p><b><?php echo "Prevent Direct Access: "; ?></b> If your <b>.htaccess</b> file were writable, we could do this automatically, but it isn’t. So please make it writable or alternatively, you can manually update your .htaccess with the mod_rewrite rules found under <b>Settings >> Permanlinks</b>. Until then, the plugin can't work yet. </p>
-            </div>
-            <?php
-        }   
+    function __construct() {
+        $pda_function = new Pda_Function();
+
+        add_filter( 'manage_upload_columns', array($this, 'add_upload_columns') );
+        add_action( 'manage_media_custom_column', array($this, 'media_custom_columns'), 0, 2 );
+        add_action( 'admin_enqueue_scripts', array('Pda_JS_Loader', 'admin_load_js') );
+        add_action( 'wp_ajax_myaction', array($this, 'so_wp_ajax_function' ) );
+        add_action( 'delete_post', array($this, 'delete_prevent_direct_access' ) );
+        add_action( 'admin_notices', array($this, 'admin_notices') );
+
+        register_activation_hook( __FILE__, array($this, 'plugin_install') );
+        register_deactivation_hook( __FILE__, array($this, 'deactivate') );
+        register_uninstall_hook( __FILE__, array($this, 'plugin_uninstall') );
+        add_filter( 'mod_rewrite_rules', array($this, 'htaccess_contents') );
     }
 
-}
+    private function admin_notices() {
+        global $pagenow;
 
-function fa_htaccess_contents( $rules ) {
-    // eg. wp-content/plugins/prevent-direct-access/download.php?download_file=$1 [R=301,L]
-    $downloadFileRedirect = str_replace(trailingslashit(site_url()), '', plugins_url('download.php', __FILE__)) . "?download_file=$1 [R=301,L]" . PHP_EOL;
-    $newRule .= "RewriteRule private/([a-zA-Z0-9]+)$ " . $downloadFileRedirect;
-    $newRule .= "RewriteCond %{REQUEST_FILENAME} -s" . PHP_EOL;
+        if ( $pagenow == 'plugins.php' || $pagenow == 'upload.php') {
+            $activation_failed_messages = $pda_function->htaccess_writable();
+            error_log( $activation_failed_messages, 0 );
 
-    $directAccessPath = str_replace(trailingslashit(site_url()), '', plugins_url('download.php', __FILE__)) . "?is_direct_access=true&download_file=$1&file_type=$2 [QSA,L]" . PHP_EOL;
+            $plugin = plugin_basename(__FILE__);
+            if ( $activation_failed_messages !== true && is_plugin_active($plugin)) {
+                // deactivate_plugins( basename( __FILE__ ) );
+                
+                ?>
+                <div class="error is-dismissible notice">
+                  <p><b><?php echo "Prevent Direct Access: "; ?></b> If your <b>.htaccess</b> file were writable, we could do this automatically, but it isn’t. So please make it writable or alternatively, you can manually update your .htaccess with the mod_rewrite rules found under <b>Settings >> Permanlinks</b>. Until then, the plugin can't work yet. </p>
+                </div>
+                <?php
+            }   
+        }
 
-    // eg. RewriteRule wp-content/uploads(/[a-zA-Z_\-\s0-9\.]+)+\.([a-zA-Z0-9]+)$ wp-content/plugins/prevent-direct-access/download.php?is_direct_access=true&download_file=$1&file_type=$2 [QSA,L]
-    $newRule .= "RewriteRule " . str_replace(trailingslashit(site_url()), '', wp_upload_dir()['baseurl']) . "(/[a-zA-Z_\-\s0-9\.]+)+\.([a-zA-Z0-9]+)$ " . $directAccessPath;
+    }
 
-    return $newRule . $rules . "Options -Indexes" . PHP_EOL;
-}
+    private function htaccess_contents( $rules ) {
+        // eg. wp-content/plugins/prevent-direct-access/download.php?download_file=$1 [R=301,L]
+        $downloadFileRedirect = str_replace(trailingslashit(site_url()), '', plugins_url('download.php', __FILE__)) . "?download_file=$1 [R=301,L]" . PHP_EOL;
+        $newRule = "RewriteRule private/([a-zA-Z0-9]+)$ " . $downloadFileRedirect;
+        $newRule .= "RewriteCond %{REQUEST_FILENAME} -s" . PHP_EOL;
 
-function upload_columns( $columns ) {
+        $directAccessPath = str_replace(trailingslashit(site_url()), '', plugins_url('download.php', __FILE__)) . "?is_direct_access=true&download_file=$1&file_type=$2 [QSA,L]" . PHP_EOL;
 
-    $columns['direct_access'] = "Prevent Direct Access";
+        // eg. RewriteRule wp-content/uploads(/[a-zA-Z_\-\s0-9\.]+)+\.([a-zA-Z0-9]+)$ wp-content/plugins/prevent-direct-access/download.php?is_direct_access=true&download_file=$1&file_type=$2 [QSA,L]
+        $newRule .= "RewriteRule " . str_replace(trailingslashit(site_url()), '', wp_upload_dir()['baseurl']) . "(/[a-zA-Z_\-\s0-9\.]+)+\.([a-zA-Z0-9]+)$ " . $directAccessPath;
 
-    return $columns;
-}
+        return $newRule . $rules . "Options -Indexes" . PHP_EOL;
+    }
 
-function media_custom_columns( $column_name, $id ) {
-    $repository = new Repository;
-    $post = get_post( $id );
-    $advance_file = $repository->get_advance_file_by_post_id( $post->ID );
-    $checked = isset( $advance_file ) && $advance_file->is_prevented;
-    $url = isset( $advance_file ) && $checked ? site_url() . '/private/' . $advance_file->url : '';
-    if ( $column_name != 'direct_access' ) return;
-?>
-     <input id="ckb_<?php
-    echo $post->ID
-    ?>" <?php
-    if ( $checked ) echo 'checked="checked"'; ?> onclick="customFile.preventFile('<?php
-    echo $post->ID
-    ?>')" type="checkbox"/><?php
-    _e( 'Prevent direct access' ); ?>
-     <div class="custom_url_<?php
-    echo $post->ID
-    ?>" style="<?php
-    if ( !$checked ) echo 'display: none;' ?>">
-     <div>Access your file via this link:</div>
-     <div>
-     <input type="text" id="custom_url_<?php
+    private function add_upload_columns( $columns ) {
+        $columns['direct_access'] = "Prevent Direct Access";
+        return $columns;
+    }
+
+    private function media_custom_columns( $column_name, $id ) {
+        $repository = new Repository;
+        $post = get_post( $id );
+        $advance_file = $repository->get_advance_file_by_post_id( $post->ID );
+        $checked = isset( $advance_file ) && $advance_file->is_prevented;
+        $url = isset( $advance_file ) && $checked ? site_url() . '/private/' . $advance_file->url : '';
+        if ( $column_name != 'direct_access' ) {
+            return;
+        }
+    ?>
+         <input id="ckb_<?php
         echo $post->ID
-        ?>" value="<?php
-        echo $url
-        ?>" style="width: 80%"></div>
-     <button id="btn_copy" type="button" onclick="customFile.copyToClipboard(this, '#custom_url_<?php
+        ?>" <?php
+        if ( $checked ) echo 'checked="checked"'; ?> onclick="customFile.preventFile('<?php
         echo $post->ID
-        ?>'); return;">Copy URL</button>
-     </div>
- <?php
-}
+        ?>')" type="checkbox"/><?php
+        _e( 'Prevent direct access' ); ?>
+         <div class="custom_url_<?php
+        echo $post->ID
+        ?>" style="<?php
+        if ( !$checked ) echo 'display: none;' ?>">
+         <div>Access your file via this link:</div>
+         <div>
+         <input type="text" id="custom_url_<?php
+            echo $post->ID
+            ?>" value="<?php
+            echo $url
+            ?>" style="width: 80%"></div>
+         <button id="btn_copy" type="button" onclick="customFile.copyToClipboard(this, '#custom_url_<?php
+            echo $post->ID
+            ?>'); return;">Copy URL</button>
+         </div>
+     <?php
+    }
 
-function so_wp_ajax_function() {
-    $repository = new Repository;
-    $post_id = $_POST['id'];
-    $is_prevented = $_POST['is_prevented'];
-    if ( $is_prevented === '1' ) {
-        $limit = fa_get_file_limitation();
-        $number_of_records = $repository->check_advance_file_limitation();
-        if ( $number_of_records >= $limit ) {
-            $file_result = array( 'error' => "You can only protect 3 files & photos on the free version. Please contact us for the premium version." );
+    function so_wp_ajax_function() {
+        $repository = new Repository;
+        $post_id = $_POST['id'];
+        $is_prevented = $_POST['is_prevented'];
+        if ( $is_prevented === '1' ) {
+            $limit = Pda_Helper::get_file_limitation();
+            $number_of_records = $repository->check_advance_file_limitation();
+            if ( $number_of_records >= $limit ) {
+                $file_result = array( 'error' => "You can only protect 3 files & photos on the free version. Please contact us for the premium version." );
+            }
+            else {
+                $file_result = insert_prevent_direct_access( $post_id, $is_prevented );
+            }
         }
         else {
-            $file_result = prevent_direct_access( $post_id, $is_prevented );
+            $file_result = insert_prevent_direct_access( $post_id, $is_prevented );
         }
+        wp_send_json( $file_result );
+        wp_die();
     }
-    else {
-        $file_result = prevent_direct_access( $post_id, $is_prevented );
+
+    private function insert_prevent_direct_access( $post_id, $is_prevented ) {
+        $repository = new Repository;
+        $file_info = array( 'time' => current_time( 'mysql' ), 'post_id' => $post_id, 'is_prevented' => $is_prevented, 'url' => Pda_Helper::generate_unique_string() );
+        $result = $repository->create_advance_file( $file_info );
+        if ( $result < 1 || $result === false ) {
+            $file_result = array( 'error' => "Cannot create file advance's info" );
+        }
+        else {
+            $file_result = $repository->get_advance_file_by_post_id( $file_info['post_id'] );
+            $generated_file_code = $file_result->url;
+            $file_result->url = site_url() . '/private/' . $file_result->url;
+        }
+        return $file_result;
     }
-    wp_send_json( $file_result );
-    wp_die();
-}
 
-function prevent_direct_access( $post_id, $is_prevented ) {
-    $repository = new Repository;
-    $file_info = array( 'time' => current_time( 'mysql' ), 'post_id' => $post_id, 'is_prevented' => $is_prevented, 'url' => generate_unique_string() );
-    $result = $repository->create_advance_file( $file_info );
-    if ( $result < 1 || $result === false ) {
-        $file_result = array( 'error' => "Cannot create file advance's info" );
+    private function delete_prevent_direct_access( $post_id ) {
+        $repository = new Repository;
+        $repository->delete_advance_file_by_post_id( $post_id );
     }
-    else {
-        $file_result = $repository->get_advance_file_by_post_id( $file_info['post_id'] );
-        $generated_file_code = $file_result->url;
-        $file_result->url = site_url() . '/private/' . $file_result->url;
+
+    function deactivate() {
+        remove_action( 'mod_rewrite_rules', array($pda_function, 'htaccess_contents') );
+        $GLOBALS['wp_rewrite']->flush_rules();
     }
-    return $file_result;
-}
 
-function delete_prevent_direct_access( $post_id ) {
-    $repository = new Repository;
-    $repository->delete_advance_file_by_post_id( $post_id );
-}
+    private function plugin_install() {
+        include dirname(__FILE__) . '/includes/db-init.php';
+        $db = new Pda_Database();
+        $db->install();
+    }
 
-function wcm_setup_demo_on_uninstall() {
-    if ( !current_user_can( 'activate_plugins' ) ) return;
-    check_admin_referer( 'bulk-plugins' );
+    function plugin_uninstall() {
+        include dirname(__FILE__) . '/includes/db-init.php';
+        $db = new Pda_Database();
+        $db->uninstall();
+    }
+} 
 
-    // Important: Check if the file is the one
-    // that was registered during the uninstall hook.
-    if ( __FILE__ != WP_UNINSTALL_PLUGIN ) return;
+$pda_admin = new Pda_Admin();
 
-    // Uncomment the following line to see the function in action
-    exit( var_dump( $_GET ) );
-}
 
-function deactivate() {
-    remove_action( 'mod_rewrite_rules', 'fa_htaccess_contents' );
-    $GLOBALS['wp_rewrite']->flush_rules();
-}
-function uninstall() {
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'prevent_direct_access';
-    $wpdb->query( "DROP TABLE IF EXISTS $table_name" );
-}
 ?>
