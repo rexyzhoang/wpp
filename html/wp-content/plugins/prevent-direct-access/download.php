@@ -1,7 +1,8 @@
 <?php
 if ( !defined( 'ABSPATH' ) ) exit;
 
-require_once 'includes/class-repository.php';
+require_once 'includes/repository.php';
+require_once 'includes/helper.php';
 ignore_user_abort( true );
 set_time_limit( 0 ); // disable the time limit for this script
 
@@ -17,7 +18,7 @@ if ( $is_direct_access === 'true' ) {
 
 
 function check_file_is_prevented() {
-    $configs = fa_get_plugin_configs();
+    $configs = Pda_Helper::get_plugin_configs();
     $endpoint = $configs['endpoint'];
     $file_name = $_GET[$endpoint];
     $guid = $_SERVER['REQUEST_URI'];
@@ -101,7 +102,7 @@ function send_file_to_client( $file ) {
 }
 
 function show_file_from_private_link() {
-    $configs = fa_get_plugin_configs();
+    $configs = Pda_Helper::get_plugin_configs();
     $endpoint = $configs['endpoint'];
     if(isset($_GET[$endpoint])) {
         $private_url = $_GET[$endpoint];
