@@ -8,6 +8,8 @@ function fa_get_file_limitation() {
 }
 
 function fa_get_plugin_configs() {
-	
+	return array(
+		'endpoint' => 'pre_dir_acc_61co625547'
+	);
 }
 ?>

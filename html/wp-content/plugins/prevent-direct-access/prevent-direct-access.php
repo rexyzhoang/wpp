@@ -22,6 +22,8 @@ add_action( 'admin_enqueue_scripts', 'admin_load_js' );
 add_action( 'wp_ajax_myaction', 'so_wp_ajax_function' );
 add_action( 'delete_post', 'delete_prevent_direct_access' );
 add_action('admin_notices', 'pda_admin_notices');
+add_action( 'init', 'wpa_my_endpoint' );
+add_action( 'parse_query', 'wpa_parse_query' );
 
 register_activation_hook( __FILE__, 'jal_install' );
 register_deactivation_hook( __FILE__, 'deactivate' );
@@ -50,9 +52,26 @@ function pda_admin_notices() {
 
 }
 
+function wpa_my_endpoint(){
+    $configs = fa_get_plugin_configs();
+    $endpoint = $configs['endpoint'];
+    add_rewrite_endpoint( $endpoint, EP_ROOT );
+}
+
+function wpa_parse_query( $query ){
+    $configs = fa_get_plugin_configs();
+    $endpoint = $configs['endpoint'];
+    if( isset( $query->query_vars[$endpoint] ) ){
+        include( plugin_dir_path( __FILE__ ) . '/download.php');
+        exit;
+    }
+}
+
+
 function fa_htaccess_contents( $rules ) {
     // eg. wp-content/plugins/prevent-direct-access/download.php?download_file=$1 [R=301,L]
     $downloadFileRedirect = str_replace(trailingslashit(site_url()), '', plugins_url('download.php', __FILE__)) . "?download_file=$1 [R=301,L]" . PHP_EOL;
+    $newRule = '';
     $newRule .= "RewriteRule private/([a-zA-Z0-9]+)$ " . $downloadFileRedirect;
     $newRule .= "RewriteCond %{REQUEST_FILENAME} -s" . PHP_EOL;
 

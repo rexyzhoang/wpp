@@ -1,11 +1,13 @@
 <?php
-require_once explode( "wp-content" , __FILE__ )[0] . "wp-load.php";
-require_once 'includes/class-repository.php';
+if ( !defined( 'ABSPATH' ) ) exit;
 
+require_once 'includes/class-repository.php';
 ignore_user_abort( true );
 set_time_limit( 0 ); // disable the time limit for this script
 
 $home_url = get_home_url();
+
+
 $is_direct_access = isset( $_GET['is_direct_access'] ) ? $_GET['is_direct_access'] : '';
 if ( $is_direct_access === 'true' ) {
     check_file_is_prevented();
@@ -15,8 +17,9 @@ if ( $is_direct_access === 'true' ) {
 
 
 function check_file_is_prevented() {
-    
-    $file_name = $_GET['download_file'];
+    $configs = fa_get_plugin_configs();
+    $endpoint = $configs['endpoint'];
+    $file_name = $_GET[$endpoint];
     $guid = $_SERVER['REQUEST_URI'];
     $file_type = $_GET['file_type'];
     $guid = preg_replace("/-\d+x\d+.$file_type$/", ".$file_type", $guid);
@@ -98,21 +101,27 @@ function send_file_to_client( $file ) {
 }
 
 function show_file_from_private_link() {
-    $private_url = $_GET['download_file'];
-    $repository = new Repository;
-    $advance_file = $repository->get_advance_file_by_url( $private_url );
-    //var_dump($advance_file);
-    if ( isset( $advance_file ) ) {
-        $post_id = $advance_file->post_id;
-        $post = $repository->get_post_by_id( $post_id );
+    $configs = fa_get_plugin_configs();
+    $endpoint = $configs['endpoint'];
+    if(isset($_GET[$endpoint])) {
+        $private_url = $_GET[$endpoint];
+        $repository = new Repository;
+        $advance_file = $repository->get_advance_file_by_url( $private_url );
+        //var_dump($advance_file);
+        if ( isset( $advance_file ) ) {
+            $post_id = $advance_file->post_id;
+            $post = $repository->get_post_by_id( $post_id );
 
-        if ( isset( $post ) ) {
-            download_file( $post );
+            if ( isset( $post ) ) {
+                download_file( $post );
+            } else {
+                echo '<h2>Sorry! Invalid post!</h2>';
+            }
         } else {
-            echo '<h2>Sorry! Invalid post!</h2>';
+            echo '<h2>Sorry! Invalid url!</h2>';
         }
     } else {
-        echo '<h2>Sorry! Invalid url!</h2>';
+       echo '<h2>Sorry! Invalid url!</h2>'; 
     }
 }
 
