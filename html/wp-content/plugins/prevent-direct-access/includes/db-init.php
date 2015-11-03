@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 global $jal_db_version;
 $jal_db_version = '1.0';
 

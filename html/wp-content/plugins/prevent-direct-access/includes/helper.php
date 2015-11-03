@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 function generate_unique_string() {
 	return uniqid();
 }
