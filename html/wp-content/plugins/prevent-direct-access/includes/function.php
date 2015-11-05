@@ -13,7 +13,7 @@ class Pda_Function {
     }
 
     function htaccess_writable() {
-    	$htaccess_file = get_htaccess_file_path();
+    	$htaccess_file = $this->get_htaccess_file_path();
     	
     	if (!file_exists($htaccess_file)) {
     		return '.htaccess file not existed';
@@ -36,7 +36,7 @@ class Pda_Function {
         
         //global $wp_rewrite;
         
-        $htaccess_file = get_htaccess_file_path();
+        $htaccess_file = $this->get_htaccess_file_path();
         
         if (!file_exists($htaccess_file)) {
             return false;

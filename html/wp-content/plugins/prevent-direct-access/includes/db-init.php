@@ -1,18 +1,16 @@
 <?php
-<<<<<<< HEAD
-if ( ! defined( 'ABSPATH' ) ) exit;
-global $jal_db_version;
-$jal_db_version = '1.0';
-=======
->>>>>>> dea698d01acd731c149499eb2c398d9996cfea5d
 
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 class Pda_Database {
 
-	function install() {
+	public function __construct() {
 		global $jal_db_version;
 		$jal_db_version = '1.0';
-
+		add_option( 'jal_db_version', $jal_db_version );
+	}
+	
+	function install() {
 		flush_rewrite_rules();
 
 		global $wpdb;
@@ -36,9 +34,7 @@ class Pda_Database {
 
 			// require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 			// dbDelta( $sql );
-			$wpdb->query( $sql )
-
-			add_option( 'jal_db_version', $jal_db_version );
+			$wpdb->query( $sql );
 		}
 	}
 
@@ -48,7 +44,5 @@ class Pda_Database {
         $wpdb->query( "DROP TABLE IF EXISTS $table_name" );
     }
 }
-
-
 
 ?>

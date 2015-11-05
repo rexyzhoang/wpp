@@ -21,7 +21,7 @@ class Pda_Admin {
     private $pda_function;
 
     function __construct() {
-        $pda_function = new Pda_Function();
+        $this->pda_function = new Pda_Function();
         add_filter( 'manage_upload_columns', array($this, 'add_upload_columns') );
         add_action( 'manage_media_custom_column', array($this, 'media_custom_columns'), 0, 2 );
         add_action( 'admin_enqueue_scripts', array('Pda_JS_Loader', 'admin_load_js') );
@@ -33,17 +33,17 @@ class Pda_Admin {
 
         register_activation_hook( __FILE__, array($this, 'plugin_install') );
         register_deactivation_hook( __FILE__, array($this, 'deactivate') );
-        register_uninstall_hook( __FILE__, array($this, 'plugin_uninstall') );
+        register_uninstall_hook( __FILE__, array('Pda_Admin', 'plugin_uninstall') );
         add_filter( 'mod_rewrite_rules', array($this, 'htaccess_contents') );
     }
 
-    private function my_endpoint(){
+    public function my_endpoint(){
         $configs = Pda_Helper::get_plugin_configs();
         $endpoint = $configs['endpoint'];
         add_rewrite_endpoint( $endpoint, EP_ROOT );
     }
 
-    private function parse_query( $query ){
+    public function parse_query( $query ){
         $configs = Pda_Helper::get_plugin_configs();
         $endpoint = $configs['endpoint'];
         if( isset( $query->query_vars[$endpoint] ) ){
@@ -52,11 +52,11 @@ class Pda_Admin {
         }
     }
 
-    private function admin_notices() {
+    public function admin_notices() {
         global $pagenow;
 
         if ( $pagenow == 'plugins.php' || $pagenow == 'upload.php') {
-            $activation_failed_messages = $pda_function->htaccess_writable();
+            $activation_failed_messages = $this->pda_function->htaccess_writable();
             error_log( $activation_failed_messages, 0 );
 
             $plugin = plugin_basename(__FILE__);
@@ -73,7 +73,7 @@ class Pda_Admin {
 
     }
 
-    private function htaccess_contents( $rules ) {
+    public function htaccess_contents( $rules ) {
         // eg. index.php?pre_dir_acc_61co625547=$1 [R=301,L]
         $configs = Pda_Helper::get_plugin_configs();
         $endpoint = $configs['endpoint'];
@@ -90,12 +90,12 @@ class Pda_Admin {
         return $newRule . $rules . "Options -Indexes" . PHP_EOL;
     }
 
-    private function add_upload_columns( $columns ) {
+    public function add_upload_columns( $columns ) {
         $columns['direct_access'] = "Prevent Direct Access";
         return $columns;
     }
 
-    private function media_custom_columns( $column_name, $id ) {
+    public function media_custom_columns( $column_name, $id ) {
         $repository = new Repository;
         $post = get_post( $id );
         $advance_file = $repository->get_advance_file_by_post_id( $post->ID );
@@ -130,7 +130,7 @@ class Pda_Admin {
      <?php
     }
 
-    private function so_wp_ajax_function() {
+    public function so_wp_ajax_function() {
         $repository = new Repository;
         $post_id = $_POST['id'];
         $is_prevented = $_POST['is_prevented'];
@@ -151,7 +151,7 @@ class Pda_Admin {
         wp_die();
     }
 
-    private function insert_prevent_direct_access( $post_id, $is_prevented ) {
+    public function insert_prevent_direct_access( $post_id, $is_prevented ) {
         $repository = new Repository;
         $file_info = array( 'time' => current_time( 'mysql' ), 'post_id' => $post_id, 'is_prevented' => $is_prevented, 'url' => Pda_Helper::generate_unique_string() );
         $result = $repository->create_advance_file( $file_info );
@@ -166,23 +166,23 @@ class Pda_Admin {
         return $file_result;
     }
 
-    private function delete_prevent_direct_access( $post_id ) {
+    public function delete_prevent_direct_access( $post_id ) {
         $repository = new Repository;
         $repository->delete_advance_file_by_post_id( $post_id );
     }
 
-    private function deactivate() {
+    public function deactivate() {
         remove_action( 'mod_rewrite_rules', array($pda_function, 'htaccess_contents') );
         $GLOBALS['wp_rewrite']->flush_rules();
     }
 
-    private function plugin_install() {
+    public function plugin_install() {
         include dirname(__FILE__) . '/includes/db-init.php';
         $db = new Pda_Database();
         $db->install();
     }
 
-    private function plugin_uninstall() {
+    public function plugin_uninstall() {
         include dirname(__FILE__) . '/includes/db-init.php';
         $db = new Pda_Database();
         $db->uninstall();
