@@ -21,6 +21,13 @@
 		      if(typeof data.error !== 'undefined') {
 		      	jQuery(checkBoxId).prop('checked', false);
 		      	alert(data.error);
+		      } else if (data == 'invalid_nonce') {
+		      	alert('No! No! No! Verify Nonce Fails!');
+		      	if (jQuery(checkBoxId).is(':checked')) {
+		      		jQuery(checkBoxId).prop('checked', false);
+		      	} else {
+		      		jQuery(checkBoxId).prop('checked', true);
+		      	}
 		      } else {
 		      	var labelId = "#custom_url_" + data.post_id;
 		      	var btnCopyId = '#btn_copy_' + data.post_id;

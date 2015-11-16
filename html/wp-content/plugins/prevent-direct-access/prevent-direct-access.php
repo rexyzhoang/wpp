@@ -110,7 +110,7 @@ class Pda_Admin {
         ?>" <?php
         if ( $checked ) echo 'checked="checked"'; ?> onclick="customFile.preventFile('<?php
         echo $post->ID
-        ?>')" nonce="<?php echo wp_create_nonce('pda_ajax_nonce'); ?>" type="checkbox"/><?php
+        ?>')" nonce="<?php echo wp_create_nonce('pda_ajax_nonce' . $post->ID); ?>" type="checkbox"/><?php
         _e( 'Prevent direct access' ); ?>
          <div class="custom_url_<?php
         echo $post->ID
@@ -132,10 +132,10 @@ class Pda_Admin {
 
     public function so_wp_ajax_function() {
         $nonce = $_REQUEST['security_check'];
-        if ( ! wp_verify_nonce( $nonce, 'pda_ajax_nonce' ) ) {
-            // This nonce is not valid.
-            // TODO: Need to alert like show errors or send json with fail message to inform user
-            die( 'Security check' );
+        $post_id = $_REQUEST['id'];
+        if ( ! wp_verify_nonce( $nonce, 'pda_ajax_nonce' . $post_id ) ) {
+            error_log('not verify nonce', 0);
+            wp_die( 'invalid_nonce' );
         }
 
         $repository = new Repository;
