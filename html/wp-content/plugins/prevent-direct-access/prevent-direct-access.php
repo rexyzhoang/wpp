@@ -62,13 +62,13 @@ class Pda_Admin {
             $plugin = plugin_basename(__FILE__);
             if ( $activation_failed_messages !== true && is_plugin_active($plugin)) {
                 // deactivate_plugins( basename( __FILE__ ) );
-                
+
                 ?>
                 <div class="error is-dismissible notice">
                   <p><b><?php echo "Prevent Direct Access: "; ?></b> If your <b>.htaccess</b> file were writable, we could do this automatically, but it isn’t. So please make it writable or alternatively, you can manually update your .htaccess with the mod_rewrite rules found under <b>Settings >> Permanlinks</b>. Until then, the plugin can't work yet. </p>
                 </div>
                 <?php
-            }   
+            }
         }
 
     }
@@ -110,7 +110,7 @@ class Pda_Admin {
         ?>" <?php
         if ( $checked ) echo 'checked="checked"'; ?> onclick="customFile.preventFile('<?php
         echo $post->ID
-        ?>')" type="checkbox"/><?php
+        ?>')" nonce="<?php echo wp_create_nonce('pda_ajax_nonce'); ?>" type="checkbox"/><?php
         _e( 'Prevent direct access' ); ?>
          <div class="custom_url_<?php
         echo $post->ID
@@ -131,6 +131,13 @@ class Pda_Admin {
     }
 
     public function so_wp_ajax_function() {
+        $nonce = $_REQUEST['security_check'];
+        if ( ! wp_verify_nonce( $nonce, 'pda_ajax_nonce' ) ) {
+            // This nonce is not valid.
+            // TODO: Need to alert like show errors or send json with fail message to inform user
+            die( 'Security check' );
+        }
+
         $repository = new Repository;
         $post_id = $_POST['id'];
         $is_prevented = $_POST['is_prevented'];
@@ -172,7 +179,7 @@ class Pda_Admin {
     }
 
     public function deactivate() {
-        remove_action( 'mod_rewrite_rules', array($pda_function, 'htaccess_contents') );
+        remove_action( 'mod_rewrite_rules', array($this, 'htaccess_contents') );
         $GLOBALS['wp_rewrite']->flush_rules();
     }
 
@@ -187,7 +194,7 @@ class Pda_Admin {
         $db = new Pda_Database();
         $db->uninstall();
     }
-} 
+}
 
 $pda_admin = new Pda_Admin();
 

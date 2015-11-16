@@ -1,7 +1,7 @@
 (function() {
 	var customFile = {
 		preventFile : _preventFile,
-		copyToClipboard: _copyToClipboard		
+		copyToClipboard: _copyToClipboard
 	};
 	function _preventFile(fileId){
 		var checkBoxId = "#ckb_" + fileId;
@@ -13,7 +13,8 @@
 		    data:{
 		      action: 'myaction',
 		      id: fileId, // this is the function in your functions.php that will be triggered
-		      is_prevented: isPrevented
+		      is_prevented: isPrevented,
+					security_check: jQuery(checkBoxId).attr('nonce')
 		    },
 		    success: function( data ){
 		      //Do something with the result from server
@@ -27,7 +28,7 @@
 		      	var custom_url_class = '.custom_url_' + data.post_id;
 		      	if(data.is_prevented === "1"){
 		      		jQuery(custom_url_class).fadeIn();
-		      		jQuery(labelId).val(data.url);	
+		      		jQuery(labelId).val(data.url);
 		      	} else {
 		      		jQuery(custom_url_class).fadeOut();
 		      	}
@@ -41,7 +42,7 @@
 	}
 
 	window.customFile = customFile;
-		
+
 	function _copyToClipboard(btn, txt_input) {
   		var $temp = jQuery("<input>");
   		jQuery("body").append($temp);
@@ -54,5 +55,5 @@
 		 	jQuery(btn).text("Copy URL");
 		}, 5000);
 	}
-	
+
 })(window);
