@@ -108,8 +108,7 @@ function show_file_from_private_link() {
         $private_url = $_GET[$endpoint];
         $repository = new Repository;
         $advance_file = $repository->get_advance_file_by_url( $private_url );
-        //var_dump($advance_file);
-        if ( isset( $advance_file ) ) {
+        if ( isset( $advance_file ) && $advance_file->is_prevented === "1" ) {
             $post_id = $advance_file->post_id;
             $post = $repository->get_post_by_id( $post_id );
 
