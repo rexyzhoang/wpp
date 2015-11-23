@@ -105,13 +105,13 @@ class Pda_Admin {
             return;
         }
     ?>
-         <input id="ckb_<?php
+         <label><input id="ckb_<?php
         echo $post->ID
         ?>" <?php
         if ( $checked ) echo 'checked="checked"'; ?> onclick="customFile.preventFile('<?php
         echo $post->ID
         ?>')" nonce="<?php echo wp_create_nonce('pda_ajax_nonce' . $post->ID); ?>" type="checkbox"/><?php
-        _e( 'Prevent direct access' ); ?>
+        _e( 'Protect this file' ); ?></label>
          <div class="custom_url_<?php
         echo $post->ID
         ?>" style="<?php
