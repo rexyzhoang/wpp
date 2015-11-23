@@ -54,21 +54,16 @@ class Pda_Admin {
     }
 
     public function check_htaccess_updated() {     
-        error_log('expression' === true, 0  );
         $htaccess_writable = $this->pda_function->htaccess_writable();
-        error_log('htaccess_writable: ' . $htaccess_writable, 0);
 
         $plugin = plugin_basename(__FILE__);
         $is_plugin_active = is_plugin_active($plugin);
         if ($htaccess_writable !== true && $is_plugin_active) {
             delete_option('updated_htaccess_success');
-            error_log('deleted option updated_htaccess_success');
         }
 
         $updated_htaccess_success = get_option('updated_htaccess_success', false);
-        error_log('updated_htaccess_success ' . $updated_htaccess_success, 0);
         if ($updated_htaccess_success === true) {
-
             return;
         }
           
