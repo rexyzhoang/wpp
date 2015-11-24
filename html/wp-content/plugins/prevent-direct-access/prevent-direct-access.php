@@ -77,16 +77,14 @@ class Pda_Admin {
         global $pagenow;
 
         if ( $pagenow == 'plugins.php' || $pagenow == 'upload.php') {
-            $activation_failed_messages = $this->pda_function->htaccess_writable();
-            error_log( $activation_failed_messages, 0 );
+            $is_htaccess_writable = $this->pda_function->htaccess_writable();
+            error_log( $is_htaccess_writable, 0 );
 
             $plugin = plugin_basename(__FILE__);
-            if ( $activation_failed_messages !== true && is_plugin_active($plugin)) {
-                // deactivate_plugins( basename( __FILE__ ) );
-
+            if ( $is_htaccess_writable !== true && is_plugin_active($plugin)) {
                 ?>
                 <div class="error is-dismissible notice">
-                  <p><b><?php echo "Prevent Direct Access: "; ?></b> If your <b>.htaccess</b> file were writable, we could do this automatically, but it isn’t. So please make it writable or alternatively, you can manually update your .htaccess with the mod_rewrite rules found under <b>Settings >> Permanlinks</b>. Until then, the plugin can't work yet. </p>
+                  <p><b><?php echo "Prevent Direct Access: "; ?></b> If your <b>.htaccess</b> file were writable, we could do this automatically, but it isn’t. So you must either make it writable or manually update your .htaccess with the mod_rewrite rules found under <b>Settings >> Permanlinks</b>. Until then, the plugin can't work yet. </p>
                 </div>
                 <?php
             }
@@ -112,7 +110,10 @@ class Pda_Admin {
     }
 
     public function add_upload_columns( $columns ) {
-        $columns['direct_access'] = "Prevent Direct Access";
+        $is_htaccess_writable = $this->pda_function->htaccess_writable();
+        if($is_htaccess_writable){
+            $columns['direct_access'] = "Prevent Direct Access";
+        } 
         return $columns;
     }
 
