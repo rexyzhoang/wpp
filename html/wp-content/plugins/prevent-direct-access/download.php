@@ -16,7 +16,6 @@ if ( $is_direct_access === 'true' ) {
     show_file_from_private_link();
 }
 
-
 function check_file_is_prevented() {
     $configs = Pda_Helper::get_plugin_configs();
     $endpoint = $configs['endpoint'];
