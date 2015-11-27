@@ -1,7 +1,7 @@
-=== Prevent Direct Access Plugin ===
-Contributors: BuildWPS, duonghung1269, gaupoit
+=== Prevent Direct Access ===
+Contributors: rexyhoang, duonghung1269, gaupoit
 Donate link: N/A
-Tags: protect, files, photos, images, pdf, 301, 302, plugin, redirect, nofollow,  404, prevent
+Tags: protect, files, photos, images, pdf, 301, 302, plugin, redirect, nofollow,  404,
 Requires at least: 4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -11,55 +11,44 @@ Stable tag: 1.0
 A simple way to prevent search engines and the public from indexing and accessing your files without user authentication.
 
 == Description ==
-**Current Version 1.0**
+Prevent Direct Access is simple way to prevent search engines and the public from indexing and accessing your files without user authentication.
+This plugin has the following functionalities:
 
+= Protect up to 3 Uploaded Files =
+Prevent Direct Access is designed to protect your files such as images, pdf or video that you upload via WordPress Media or Post.
+Once protected, they cannot be accessed directly on the server. An error message will appear if others attempt to read and download these files.
 
-This plugin has these functionalities:
+= Generate Private URL =
+Once a file is protected, the plugin will automatically generate a private URL containing random string for users to access the file. This private URL is the ONLY way to access the protected file.
+Users can copy that private URL to clipboard and subsequently  pasting it on their browsers or email by clicking on the “Copy URL” button.
 
-= PROTECT UPLOADED FILES =
-Prevent Direct Access is designed to protect your website files such as images, pdf and video uploaded via Wordpress Media or post.
+If you need help with the plugin or you want to report a bug please refer to http://www.buildwps.com/prevent-direct-access/
 
+= Protected File Restrictions =
+This plugin restricts the maximum number of protected files to 3 for the free version. The premium version will offer unlimited protected files and some other extended features. Contact us at hello@buildwps.com to enquire more on the premium version.
 
-Once protected, they cannot be accessed directly on the server. An error message will appear if users attempt to read and download those files.
-
-= COPY PRIVATE URL TO CLIPBOARD =
-Once a file is checked to be protected, the plugin will generate a private URL containing random string for users to access the file. This private URL is the only way to access that protected file.
-Users can copy that private URL to clipboard (to paste on their browsers or email) by clicking on the “Copy URL” button.
-
-
-= FILE RESTRICTIONS =
-Currently, this plugin restricts the maximum number of protected files to 3 for the free version. The premium version will offer unlimited protected files and some other features. Contact us at hello@buildwps.com for the premium version.
-
-**PLEASE NOTE:**  This plugin is not compatible with WordPress versions less than 3.7. Requires PHP 5.2+.
-
-= TROUBLESHOOTING: =
-We will update troubleshootings later.
 
 == Installation ==
-
 1. Upload `prevent-direct-access` folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Protect your files by going to ‘Media’, under list view
-
+3. Protect your files under ‘Media’ list view
 
 == Frequently Asked Questions ==
-** SEE A LIST OF MORE UP TO DATE FAQS IN THE PLUGIN MENU ITSELF ** 
-
 = Why nothing happens after I activate the plugin? =
-First, this plugin only supports Apache server at the moment. 
-Second, the plugin needs to flush some mod_rewrite rule to your website’s .htaccess file to prevent direct access to your files on the server. So in order for the plugin to work properly, you must make that .htaccess file (located on your website root folder) writable.
+First, the plugin only supports Apache HTTP Server ("httpd") at the moment. If you’re not using it, you may consider switching to httpd as it has been the most popular web server on the Internet since April 1996.
 
+Second, the plugin also needs to flush some mod_rewrite rules to your website’s .htaccess file to prevents direct access to your files on the server. In order for the plugin to work properly, you must either make the .htaccess file (located on your website root folder) writable or manually update our mod_rewrite rules to your htaccess.
 = Why do I see the popup box that says I can protect only 3 files? =
 The free version of this plugin offers protection to 3 files only. Contact us at hello@buildwps.com for the premium version, which offer unlimited protected files and other premium features.
 
 == Screenshots ==
-1. How to activate plugin
+1. Once you have installed the plugin, please click “Activate”
 2. Go to media to protect your files
-3. Choose list view mode for the plugin’s options to show
-4. How to protect your files 
-5. Copy private url to clipboard
-6. How to unprotect your files
-7. A warning message is displayed when you try to protect more than 3 files
+3. Choose “List View” mode for the plugin’s options to show
+4. You will notice there’s an extra column called “ Prevent Direct Access” generated by our plugin. Simply check the box next to the file that you want to protect to prevent others from accessing to it.
+5. Once you check the box, the plugin will automatically generate a private URL. Click “Copy  URL” to copy it to clipboard.
+6. If you want to unprotect your files, simply uncheck the box again.
+7. As the free version of this plugin offers protection to up to 3 files only, an error message will be displayed when you try to protect more than 3 files. Contact us at hello@buildwps.com for the premium version, which offer unlimited protected files and other premium features.
 
 == Changelog ==
 = TODO =
