@@ -1,11 +1,12 @@
+
 === Prevent Direct Access ===
-Contributors: rexyhoang, duonghung1269, gaupoit
+Contributors: duonghung1269, gaupoit
 Donate link: N/A
 Tags: protect, files, photos, images, pdf, 301, 302, plugin, redirect, nofollow,  404,
 Requires at least: 4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Tested up to: 1.0
+Tested up to: 4.3
 Stable tag: 1.0
 
 A simple way to prevent search engines and the public from indexing and accessing your files without user authentication.
@@ -13,11 +14,9 @@ A simple way to prevent search engines and the public from indexing and accessin
 == Description ==
 Prevent Direct Access is simple way to prevent search engines and the public from indexing and accessing your files without user authentication.
 This plugin has the following functionalities:
-
 = Protect up to 3 Uploaded Files =
 Prevent Direct Access is designed to protect your files such as images, pdf or video that you upload via WordPress Media or Post.
 Once protected, they cannot be accessed directly on the server. An error message will appear if others attempt to read and download these files.
-
 = Generate Private URL =
 Once a file is protected, the plugin will automatically generate a private URL containing random string for users to access the file. This private URL is the ONLY way to access the protected file.
 Users can copy that private URL to clipboard and subsequently  pasting it on their browsers or email by clicking on the “Copy URL” button.
@@ -30,8 +29,8 @@ This plugin restricts the maximum number of protected files to 3 for the free ve
 
 == Installation ==
 1. Upload `prevent-direct-access` folder to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Protect your files under ‘Media’ list view
+2. Activate the plugin through the `Plugins` menu in WordPress
+3. Protect your files under `Media` list view
 
 == Frequently Asked Questions ==
 = Why nothing happens after I activate the plugin? =
@@ -58,3 +57,5 @@ The free version of this plugin offers protection to 3 files only. Contact us at
 
 == Upgrade Notice ==
 N/A
+	
+
