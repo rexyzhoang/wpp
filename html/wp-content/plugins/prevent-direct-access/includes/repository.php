@@ -91,6 +91,19 @@ class Repository {
 			$this->delete_advance_file( $advance_file->ID );
 		}
 	}
+
+	/**
+	 * Update the new private link by post id
+	 *
+	 * @param int     $post_id post's id
+	 * @return int|false       The number of rows updated, or false on error
+	 */
+	function update_private_link_by_post_id( $post_id ) {
+		$data = array( 'url' => Pda_Helper::generate_unique_string() );
+		$where = array( 'post_id' => $post_id );
+		$result = $this->wpdb->update( $this->table_name, $data, $where );
+		return $result;
+	}
 }
 
 ?>
