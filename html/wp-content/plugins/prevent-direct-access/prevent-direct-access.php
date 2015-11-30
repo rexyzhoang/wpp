@@ -6,7 +6,7 @@ Plugin URI: https://github.com/gaupoit/wpp
 Description: A simple way to prevent search engines and the public from indexing and accessing your file without user authentication.
 Version: 1.0
 Author: HTH
-Author URI: https://github.com/gaupoit/wpp
+Author URI: http://www.buildwps.com/prevent-direct-access/
 License: GPL
 */
 if ( !defined( 'ABSPATH' ) ) exit;
