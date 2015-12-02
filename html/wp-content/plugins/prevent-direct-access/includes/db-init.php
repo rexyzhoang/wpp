@@ -29,6 +29,7 @@ class Pda_Database {
 		    	time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
 		    	url varchar(55) DEFAULT '' NOT NULL,
 		    	is_prevented tinyint(1) DEFAULT 1,
+		    	hits_count mediumint(9) NOT NULL,
 		    	UNIQUE KEY id (id)
 		    ) $charset_collate;";
 
