@@ -26,6 +26,7 @@ class Pda_Admin {
         add_action( 'manage_media_custom_column', array($this, 'media_custom_columns'), 0, 2 );
         add_action( 'admin_enqueue_scripts', array('Pda_JS_Loader', 'admin_load_js') );
         add_action( 'wp_ajax_myaction', array($this, 'so_wp_ajax_function' ) );
+        add_action( 'wp_ajax_regenerate-url', array($this, 'so_wp_ajax_regenerate_url') );
         add_action( 'delete_post', array($this, 'delete_prevent_direct_access' ) );
         add_action( 'admin_notices', array($this, 'admin_notices') );
         add_action( 'init', array($this, 'my_endpoint') );
@@ -145,6 +146,9 @@ class Pda_Admin {
             ?>" value="<?php
             echo $url
             ?>" style="width: 80%"></div>
+         <button id="btn_regenerate_<?php echo $post->ID?>" type="button" onclick="customFile.regeneratePrivateLink('<?php
+            echo $post->ID
+            ?>'); return;" nonce="<?php echo wp_create_nonce('pda_ajax_nonce' . $post->ID); ?>">Regenerate URL</button>   
          <button id="btn_copy" type="button" onclick="customFile.copyToClipboard(this, '#custom_url_<?php
             echo $post->ID
             ?>'); return;">Copy URL</button>
@@ -175,6 +179,31 @@ class Pda_Admin {
         }
         else {
             $file_result = $this->insert_prevent_direct_access( $post_id, $is_prevented );
+        }
+        wp_send_json( $file_result );
+        wp_die();
+    }
+
+    public function check_nonce($nonce, $post_id) {
+        if ( ! wp_verify_nonce( $nonce, 'pda_ajax_nonce' . $post_id ) ) {
+            error_log('not verify nonce', 0);
+            wp_die( 'invalid_nonce' );
+        }
+    }
+
+    public function so_wp_ajax_regenerate_url() {
+        $nonce = $_REQUEST['security_check'];
+        $post_id = $_REQUEST['id'];
+        $this->check_nonce($nonce, $post_id);
+        $repository = new Repository;
+        $post_id = $_POST['id'];
+        $result = $repository->update_private_link_by_post_id($post_id);
+        if ( $result < 1 || $result === false ) {
+            $file_result = array( 'error' => "Cannot re-generate private link" );
+        } else {
+            $file_result = $repository->get_advance_file_by_post_id( $post_id );
+            $generated_file_code = $file_result->url;
+            $file_result->url = site_url() . '/private/' . $file_result->url;
         }
         wp_send_json( $file_result );
         wp_die();
