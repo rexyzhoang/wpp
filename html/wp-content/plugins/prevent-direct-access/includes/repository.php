@@ -46,6 +46,7 @@ class Repository {
 		$queryString = "SELECT * FROM $table_name WHERE post_type='attachment' AND guid LIKE %s";
 		$preparation = $this->wpdb->prepare( $queryString, $guid, ARRAY_A );
 		$post = $this->wpdb->get_row( $preparation );
+		error_log("[repository.49]id: " . $post->ID);
 		return $post;
 	}
 

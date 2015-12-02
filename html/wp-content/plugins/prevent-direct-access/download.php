@@ -36,12 +36,8 @@ function check_file_is_prevented() {
             status_header( 404 );
             die( '404 &#8212; File not found.' );
         } else {
-            $post_date = $post->post_date;
-            $month = date("m", strtotime($post_date)); //10
-            $year = date("Y", strtotime($post_date));  //2015
-            $path_to_upload = wp_upload_dir();
-            $base_dir = $path_to_upload['basedir'];
-            $file = $base_dir . '/' . $year . '/' . $month . '/' . $file_name . '.' . $file_type;
+            $base_dir = ABSPATH;
+            $file = $base_dir . $guid;
             error_log("[download.25]file: " . $file);
             send_file_to_client( $file );
         }
