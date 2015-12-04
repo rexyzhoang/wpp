@@ -1,7 +1,7 @@
 
 === Prevent Direct Access ===
 Contributors: duonghung1269, gaupoit
-Donate link: http://www.buildwps.com/prevent-direct-access/
+Donate link: N/A
 Tags: protect, files, photos, images, pdf, 301, 302, plugin, redirect, nofollow,  404,
 Requires at least: 4.0
 License: GPLv2 or later
