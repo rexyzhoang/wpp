@@ -48,6 +48,8 @@ class Pda_Admin {
         $configs = Pda_Helper::get_plugin_configs();
         $endpoint = $configs['endpoint'];
         if( isset( $query->query_vars[$endpoint] ) ){
+            //var_dump($query->query_vars);
+            //error_log("query_vars: " . print_r($query->query_vars, 1), 0);
             include( plugin_dir_path( __FILE__ ) . '/download.php');
             exit;
         }
@@ -113,6 +115,7 @@ class Pda_Admin {
         $is_htaccess_writable = $this->pda_function->htaccess_writable();
         if($is_htaccess_writable === true){
             $columns['direct_access'] = "Prevent Direct Access";
+            $columns['hits_count'] = "Hits Count";
         } 
         return $columns;
     }
@@ -123,9 +126,7 @@ class Pda_Admin {
         $advance_file = $repository->get_advance_file_by_post_id( $post->ID );
         $checked = isset( $advance_file ) && $advance_file->is_prevented;
         $url = isset( $advance_file ) && $checked ? site_url() . '/private/' . $advance_file->url : '';
-        if ( $column_name != 'direct_access' ) {
-            return;
-        }
+        if ( $column_name == 'direct_access' ) {           
     ?>
          <label><input id="ckb_<?php
         echo $post->ID
@@ -150,6 +151,14 @@ class Pda_Admin {
             ?>'); return;">Copy URL</button>
          </div>
      <?php
+        }
+
+        if ( $column_name == 'hits_count') {
+            $hits_count = (isset( $advance_file ) && isset( $advance_file->hits_count )) ? $advance_file->hits_count : 0;
+            ?>
+            <label><?php echo $hits_count; ?></label>
+            <?php
+        }
     }
 
     public function so_wp_ajax_function() {

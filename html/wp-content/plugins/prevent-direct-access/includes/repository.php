@@ -21,6 +21,7 @@ class Repository {
 		if ( isset( $post ) ) {
 			$file_advance = $this->get_advance_file_by_post_id( $post_id );
 			if ( !isset( $file_advance ) ) {
+				$file_info['hits_count'] = 0;
 				$result = $this->wpdb->insert( $this->table_name, $file_info );
 			}
 			else {
@@ -70,6 +71,14 @@ class Repository {
 
 	function delete_advance_file( $id ) {
 		$result = $this->wpdb->delete( $this->table_name, array( 'ID' => $id ), array( '%d' ) );
+	}
+
+	function update_advance_file_by_id( $id, $data ) {
+		//error_log("$data = " . print_r($data, 1), 0);
+		//error_log("$id = " . $id, 0);
+		$where = array('ID' => $id);
+		$result = $this->wpdb->update( $this->table_name, $data, $where );
+		return $result;
 	}
 
 	function update_advance_file_by_post_id( $file_info ) {
