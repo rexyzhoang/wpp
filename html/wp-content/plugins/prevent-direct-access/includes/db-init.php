@@ -18,7 +18,6 @@ class Pda_Database {
 
 		$wpdb->show_errors();
 
-
 		$table_name = $wpdb->prefix . 'prevent_direct_access';
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) != $table_name ) {
 			//table is not created. you may create the table here.
@@ -30,7 +29,6 @@ class Pda_Database {
 		    	time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
 		    	url varchar(55) DEFAULT '' NOT NULL,
 		    	is_prevented tinyint(1) DEFAULT 1,
-		    	hits_count mediumint(9) NOT NULL,
 		    	UNIQUE KEY id (id)
 		    ) $charset_collate;";
 
