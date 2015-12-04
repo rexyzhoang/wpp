@@ -18,6 +18,7 @@ class Pda_Database {
 
 		$wpdb->show_errors();
 
+
 		$table_name = $wpdb->prefix . 'prevent_direct_access';
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) != $table_name ) {
 			//table is not created. you may create the table here.
