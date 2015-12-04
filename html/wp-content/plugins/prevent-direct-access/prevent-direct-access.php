@@ -163,19 +163,7 @@ class Pda_Admin {
         $repository = new Repository;
         $post_id = $_POST['id'];
         $is_prevented = $_POST['is_prevented'];
-        if ( $is_prevented === '1' ) {
-            $limit = Pda_Helper::get_file_limitation();
-            $number_of_records = $repository->check_advance_file_limitation();
-            if ( $number_of_records >= $limit ) {
-                $file_result = array( 'error' => "You can only protect 3 files & photos on the free version. Please contact us for the premium version." );
-            }
-            else {
-                $file_result = $this->insert_prevent_direct_access( $post_id, $is_prevented );
-            }
-        }
-        else {
-            $file_result = $this->insert_prevent_direct_access( $post_id, $is_prevented );
-        }
+        $file_result = $this->insert_prevent_direct_access( $post_id, $is_prevented );
         wp_send_json( $file_result );
         wp_die();
     }
