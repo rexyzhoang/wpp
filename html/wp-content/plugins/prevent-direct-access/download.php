@@ -11,8 +11,9 @@ $home_url = get_home_url();
 
 $is_direct_access = isset( $_GET['is_direct_access'] ) ? $_GET['is_direct_access'] : '';
 if ( $is_direct_access === 'true' ) {
+    error_log("is_direct_access ============== " . $is_direct_access);
     check_file_is_prevented();
-} else {
+} else {    
     show_file_from_private_link();
 }
 
@@ -31,6 +32,7 @@ function check_file_is_prevented() {
     if ( isset( $post ) ) {
         error_log("[download.25]PostId: " . $post->ID);
         $advance_file = $repository->get_advance_file_by_post_id( $post->ID );
+        //error_log("$advance_file = " . $advance_file->ID);
         //check whether the file is prevented
         if ( isset( $advance_file ) && $advance_file->is_prevented === "1" ) {
             status_header( 404 );
@@ -38,7 +40,6 @@ function check_file_is_prevented() {
         } else {
             $base_dir = ABSPATH;
             $file = $base_dir . $guid;
-            error_log("[download.25]file: " . $file);
             send_file_to_client( $file );
         }
     } else {
@@ -106,6 +107,11 @@ function show_file_from_private_link() {
         if ( isset( $advance_file ) && $advance_file->is_prevented === "1" ) {
             $post_id = $advance_file->post_id;
             $post = $repository->get_post_by_id( $post_id );
+
+            error_log("==========show_file_from_private_link()");
+            // update hits count by 1
+            $new_hits_count = isset($advance_file->hits_count) ? $advance_file->hits_count + 1 : 1;     
+            $repository->update_advance_file_by_id($advance_file->ID, array('hits_count' => $new_hits_count));
 
             if ( isset( $post ) ) {
                 download_file( $post );
