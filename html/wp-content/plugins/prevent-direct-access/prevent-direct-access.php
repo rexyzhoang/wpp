@@ -4,7 +4,7 @@
 Plugin Name: Prevent Direct Access
 Plugin URI: https://github.com/gaupoit/wpp
 Description: A simple way to prevent search engines and the public from indexing and accessing your file without user authentication.
-Version: 1.0
+Version: 1.1
 Author: HTH
 Author URI: http://www.buildwps.com/prevent-direct-access/
 License: GPL
@@ -32,6 +32,7 @@ class Pda_Admin {
         add_action( 'init', array($this, 'my_endpoint') );
         add_action( 'admin_init', array($this, 'check_htaccess_updated') );
         add_action( 'parse_query', array($this, 'parse_query') );
+        add_action( 'plugins_loaded', array($this, 'pda_update_db_check' ) );
 
         register_activation_hook( __FILE__, array($this, 'plugin_install') );
         register_deactivation_hook( __FILE__, array($this, 'deactivate') );
@@ -232,6 +233,7 @@ class Pda_Admin {
     }
 
     public function plugin_install() {
+        flush_rewrite_rules();
         include dirname(__FILE__) . '/includes/db-init.php';
         $db = new Pda_Database();
         $db->install();
@@ -241,6 +243,12 @@ class Pda_Admin {
         include dirname(__FILE__) . '/includes/db-init.php';
         $db = new Pda_Database();
         $db->uninstall();
+    }
+
+    public function pda_update_db_check() {
+        include dirname(__FILE__) . '/includes/db-init.php';
+        $db = new Pda_Database();
+        $db->install();
     }
 }
 
