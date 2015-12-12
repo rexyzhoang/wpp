@@ -36,11 +36,15 @@ function check_file_is_prevented() {
             status_header( 404 );
             die( '404 &#8212; File not found.' );
         } else {
-            $guid = str_replace("/wp-content/uploads","",$guid);
+            $needed = "/uploads";
+            $upload_pos = strrpos($guid, "/uploads");
+            $position = $upload_pos + strlen($needed);
+            $guid = substr($guid, $position);
             $upload_dir = wp_upload_dir(); 
             $base_dir = $upload_dir["basedir"];
             $file = $base_dir . $guid;
             error_log("Base_Dir: " . $base_dir);
+            error_log("GUID: " . $guid);
             error_log("[download.25]file: " . $file);
             send_file_to_client( $file );
         }
