@@ -131,5 +131,6 @@ function download_file( $post ) {
     $site_url = get_site_url();
     $wpDir = ABSPATH;
     $fullPath = str_replace( $site_url . '/', $wpDir, $fullPath );
+    error_log("FullPath: " . $fullPath);
     send_file_to_client( $fullPath );
 }

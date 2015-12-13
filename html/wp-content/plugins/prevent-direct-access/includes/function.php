@@ -38,9 +38,11 @@ class Pda_Function {
         $file_contents = preg_replace('/\s+/', '', trim( $file_contents ) );
         $this->htaccess_content =  preg_replace('/\s+/', '', trim( $this->htaccess_content ) );
         if($this->htaccess_content === $file_contents){
+            error_log("Same file content");
             return true;
         }
         if ( is_writable( $htaccess_file ) ) {
+            error_log("Writeable");
             return true;
         }
 
