@@ -37,6 +37,8 @@ class Pda_Function {
         $file_contents = file_get_contents( $htaccess_file );
         $file_contents = preg_replace('/\s+/', '', trim( $file_contents ) );
         $this->htaccess_content =  preg_replace('/\s+/', '', trim( $this->htaccess_content ) );
+        error_log($file_contents);
+        error_log($this->htaccess_content);
         if($this->htaccess_content === $file_contents){
             error_log("Same file content");
             return true;
