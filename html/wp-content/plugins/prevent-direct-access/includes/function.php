@@ -3,21 +3,9 @@ if ( !defined( 'ABSPATH' ) ) die( 'You do not have sufficient permissions to acc
 
 class Pda_Function {
 
-    public $htaccess_content = "# BEGIN WordPress
-                                        RewriteRule private/([a-zA-Z0-9]+)$ index.php?pre_dir_acc_61co625547=$1 [R=301,L]
-                                        RewriteCond %{REQUEST_FILENAME} -s
-                                        RewriteRule wp-content/uploads(/[a-zA-Z_\-\s0-9\.]+)+\.([a-zA-Z0-9]+)$ index.php?pre_dir_acc_61co625547=$1&is_direct_access=true&file_type=$2 [QSA,L]
-                                        <IfModule mod_rewrite.c>
-                                        RewriteEngine On
-                                        RewriteBase /
-                                        RewriteRule ^index\.php$ - [L]
-                                        RewriteCond %{REQUEST_FILENAME} !-f
-                                        RewriteCond %{REQUEST_FILENAME} !-d
-                                        RewriteRule . /index.php [L]
-                                        </IfModule>
-                                        Options -Indexes
-
-                                # END WordPress";
+    public $htaccess_content = "RewriteRule private/([a-zA-Z0-9]+)$ index.php?pre_dir_acc_61co625547=$1 [R=301,L]
+                                RewriteCond %{REQUEST_FILENAME} -s
+                                RewriteRule wp-content/uploads(/[a-zA-Z_\-\s0-9\.]+)+\.([a-zA-Z0-9]+)$ index.php?pre_dir_acc_61co625547=$1&is_direct_access=true&file_type=$2 [QSA,L]";
     function get_htaccess_file_path() {
 
         //global $wp_rewrite;
@@ -34,19 +22,18 @@ class Pda_Function {
             return '.htaccess file not existed';
         }
 
-        $file_contents = file_get_contents( $htaccess_file );
-        $file_contents = preg_replace('/\s+/', '', trim( $file_contents ) );
-        $this->htaccess_content =  preg_replace('/\s+/', '', trim( $this->htaccess_content ) );
-        error_log($file_contents);
-        error_log($this->htaccess_content);
-        
         if ( is_writable( $htaccess_file ) ) {
-            error_log("Writeable");
+            error_log( "Writeable" );
             return true;
         }
 
-        if($this->htaccess_content === $file_contents){
-            error_log("Same file content");
+        $file_contents = file_get_contents( $htaccess_file );
+        $file_contents = preg_replace( '/\s+/', '', trim( $file_contents ) );
+        $this->htaccess_content =  preg_replace( '/\s+/', '', trim( $this->htaccess_content ) );
+        $ruleFound = strrpos( $file_contents, $this->htaccess_content );
+
+        if ( $ruleFound !== FALSE ) {
+            error_log( "Same file content" );
             return true;
         }
 
