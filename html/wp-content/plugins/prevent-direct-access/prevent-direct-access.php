@@ -4,7 +4,7 @@
 Plugin Name: Prevent Direct Access
 Plugin URI: http://www.buildwps.com/prevent-direct-access/
 Description: A simple way to prevent search engines and the public from indexing and accessing your file without user authentication.
-Version: 1.0
+Version: 1.1
 Author: HTH
 Author URI: http://www.buildwps.com/prevent-direct-access/
 License: GPL
