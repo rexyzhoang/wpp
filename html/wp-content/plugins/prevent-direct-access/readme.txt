@@ -50,8 +50,7 @@ The free version of this plugin offers protection to 3 files only. Contact us at
 7. As the free version of this plugin offers protection to up to 3 files only, an error message will be displayed when you try to protect more than 3 files. Contact us at hello@buildwps.com for the premium version, which offer unlimited protected files and other premium features.
 
 == Changelog ==
-1.1
-
+= 1.1 =
 * Remove 3 limited files option, currently can protect unlimited files.
 * Change the way to get protected file path 
 * User can manually .htaccess file content by rules defined by plugin
