@@ -22,14 +22,14 @@ function check_file_is_prevented() {
     $file_name = $_GET[$endpoint];
     $guid = $_SERVER['REQUEST_URI'];
     $file_type = $_GET['file_type'];
-    $guid = preg_replace("/-\d+x\d+.$file_type$/", ".$file_type", $guid);
-    error_log("[download.23]guid: " . $guid);
-    $file_name = preg_replace('{^/|\?.*}', '', $file_name);
+    $guid = preg_replace( "/-\d+x\d+.$file_type$/", ".$file_type", $guid );
+    error_log( "[download.23]guid: " . $guid );
+    $file_name = preg_replace( '{^/|\?.*}', '', $file_name );
 
     $repository = new Repository;
     $post = $repository->get_post_by_guid( $guid );
     if ( isset( $post ) ) {
-        error_log("[download.25]PostId: " . $post->ID);
+        error_log( "[download.25]PostId: " . $post->ID );
         $advance_file = $repository->get_advance_file_by_post_id( $post->ID );
         //check whether the file is prevented
         if ( isset( $advance_file ) && $advance_file->is_prevented === "1" ) {
@@ -37,15 +37,15 @@ function check_file_is_prevented() {
             die( '404 &#8212; File not found.' );
         } else {
             $needed = "/uploads";
-            $upload_pos = strrpos($guid, "/uploads");
-            $position = $upload_pos + strlen($needed);
-            $guid = substr($guid, $position);
-            $upload_dir = wp_upload_dir(); 
+            $upload_pos = strrpos( $guid, "/uploads" );
+            $position = $upload_pos + strlen( $needed );
+            $guid = substr( $guid, $position );
+            $upload_dir = wp_upload_dir();
             $base_dir = $upload_dir["basedir"];
             $file = $base_dir . $guid;
-            error_log("Base_Dir: " . $base_dir);
-            error_log("GUID: " . $guid);
-            error_log("[download.25]file: " . $file);
+            error_log( "Base_Dir: " . $base_dir );
+            error_log( "GUID: " . $guid );
+            error_log( "[download.25]file: " . $file );
             send_file_to_client( $file );
         }
     } else {
@@ -99,14 +99,14 @@ function send_file_to_client( $file ) {
         status_header( 304 );
         exit;
     }
-    
+
     readfile( $file );
 }
 
 function show_file_from_private_link() {
     $configs = Pda_Helper::get_plugin_configs();
     $endpoint = $configs['endpoint'];
-    if(isset($_GET[$endpoint])) {
+    if ( isset( $_GET[$endpoint] ) ) {
         $private_url = $_GET[$endpoint];
         $repository = new Repository;
         $advance_file = $repository->get_advance_file_by_url( $private_url );
@@ -122,7 +122,7 @@ function show_file_from_private_link() {
             echo '<h2>Sorry! Invalid url!</h2>';
         }
     } else {
-       echo '<h2>Sorry! Invalid url!</h2>'; 
+        echo '<h2>Sorry! Invalid url!</h2>';
     }
 }
 
@@ -131,6 +131,6 @@ function download_file( $post ) {
     $site_url = get_site_url();
     $wpDir = ABSPATH;
     $fullPath = str_replace( $site_url . '/', $wpDir, $fullPath );
-    error_log("FullPath: " . $fullPath);
+    error_log( "FullPath: " . $fullPath );
     send_file_to_client( $fullPath );
 }
