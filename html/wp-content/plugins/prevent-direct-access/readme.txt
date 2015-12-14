@@ -55,6 +55,9 @@ The free version of this plugin offers protection to 3 files only. Contact us at
 * Change the way to get protected file path 
 * User can manually .htaccess file content by rules defined by plugin
 
+= 1.0 = 
+* First release of plugin.
+
 = TODO =
 * Support nginx server
 * Track private URL hits
