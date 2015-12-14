@@ -14,7 +14,7 @@ A simple way to prevent search engines and the public from indexing and accessin
 == Description ==
 Prevent Direct Access is simple way to prevent search engines and the public from indexing and accessing your files without user authentication.
 This plugin has the following functionalities:
-= Protect up to 3 Uploaded Files =
+= Protect up to unlimited Uploaded Files =
 Prevent Direct Access is designed to protect your files such as images, pdf or video that you upload via WordPress Media or Post.
 Once protected, they cannot be accessed directly on the server. An error message will appear if others attempt to read and download these files.
 = Generate Private URL =
