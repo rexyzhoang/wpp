@@ -13,18 +13,20 @@ A simple way to prevent search engines and the public from indexing and accessin
 
 == Description ==
 Prevent Direct Access is simple way to prevent search engines and the public from indexing and accessing your files without user authentication.
+
 This plugin has the following functionalities:
-= Protect up to unlimited Uploaded Files =
+= Protect Unlimited Uploaded Files =
 Prevent Direct Access is designed to protect your files such as images, pdf or video that you upload via WordPress Media or Post.
+
 Once protected, they cannot be accessed directly on the server. An error message will appear if others attempt to read and download these files.
 = Generate Private URL =
 Once a file is protected, the plugin will automatically generate a private URL containing random string for users to access the file. This private URL is the ONLY way to access the protected file.
+
 Users can copy that private URL to clipboard and subsequently  pasting it on their browsers or email by clicking on the “Copy URL” button.
 
 If you need help with the plugin or you want to report a bug please refer to http://www.buildwps.com/prevent-direct-access/
 
-= Protected File Restrictions =
-This plugin restricts the maximum number of protected files to 3 for the free version. The premium version will offer unlimited protected files and some other extended features. Contact us at hello@buildwps.com to enquire more on the premium version.
+Our premium version helps you track the number of clicks (hits) on your private links; enables you to edit the private links and many other extended features. Contact us at hello@buildwps.com to enquire more on the premium version.
 
 
 == Installation ==
