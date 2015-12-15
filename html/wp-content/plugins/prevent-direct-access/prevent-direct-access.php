@@ -84,7 +84,7 @@ class Pda_Admin {
             if ( $is_htaccess_writable !== true && is_plugin_active($plugin)) {
                 ?>
                 <div class="error is-dismissible notice">
-                  <p><b><?php echo "Prevent Direct Access: "; ?></b> If your <b>.htaccess</b> file were writable, we could do this automatically, but it isn’t. So you must either make it writable or manually update your [LINK THIS .HTACCESS TO http://www.buildwps.com/prevent-direct-access/#htaccess].htaccess with the mod_rewrite rules found under <b>Settings > Permalinks</b>. Until then, the plugin can't work yet. </p>
+                  <p><b><?php echo "Prevent Direct Access: "; ?></b> If your <b>.htaccess</b> file were writable, we could do this automatically, but it isn’t. So you must either make it writable or manually update your <a href="http://www.buildwps.com/prevent-direct-access/#htaccess" target="_blank">.htaccess with the mod_rewrite rules</a> found under <b>Settings > Permalinks</b>. Until then, the plugin can't work yet. </p>
                 </div>
                 <?php
             }
